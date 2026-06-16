@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibliotec · Gerencia CDMX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#21483d;        /* tarjetas y hero */
+    --verde-oscuro:#1f3d32; /* títulos sobre claro */
+    --verde-suave:#2e5a4c;  /* círculos decorativos */
+    --crema:#f6f2ea;        /* fondo general */
+    --blanco:#ffffff;
+    --dorado:#c89a4a;       /* botón de búsqueda / acentos */
+    --borde:#e0e7df;
+    --texto:#27332d;
+    --texto-sec:#6e7c73;
+    --radio:24px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Jost',sans-serif;background:var(--crema);color:var(--texto);line-height:1.6}
+  .display{font-family:'Fraunces',serif;letter-spacing:-0.02em}
+  a{color:inherit;text-decoration:none}
+  img{display:block;width:100%;height:100%;object-fit:cover}
+  .contenedor{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* ===== Header ===== */
+  header{position:sticky;top:0;z-index:50;background:rgba(246,242,234,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--borde)}
+  .barra{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .marca{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.14em;font-size:14px;text-transform:uppercase;color:var(--verde-oscuro)}
+  .marca svg{width:30px;height:30px}
+  nav{display:flex;gap:28px;font-size:14px;font-weight:500}
+  nav a{color:var(--texto-sec);transition:color .2s}
+  nav a:hover,nav a:focus-visible{color:var(--verde-oscuro)}
+  @media(max-width:720px){nav{display:none}}
+
+  /* ===== Hero ===== */
+  .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;padding:44px 0 12px}
+  @media(max-width:900px){.hero{grid-template-columns:1fr}}
+  .hero-tarjeta{position:relative;overflow:hidden;background:var(--verde);color:#fdfbf6;border-radius:var(--radio);padding:52px 48px}
+  .hero-tarjeta::before,.hero-tarjeta::after{content:'';position:absolute;border-radius:50%}
+  .hero-tarjeta::before{width:340px;height:340px;background:var(--verde-suave);top:-140px;right:-120px}
+  .hero-tarjeta::after{width:220px;height:220px;border:1px solid rgba(253,251,246,.35);bottom:-90px;right:60px}
+  .kicker{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#cfe0d4;position:relative;z-index:1}
+  .hero-tarjeta h1{font-size:clamp(30px,4vw,44px);font-weight:700;margin:14px 0 16px;position:relative;z-index:1}
+  .hero-tarjeta p{max-width:46ch;color:#dfe9e1;position:relative;z-index:1}
+  .buscador{position:relative;z-index:1;display:flex;align-items:center;background:var(--blanco);border-radius:14px;margin-top:26px;padding:6px 6px 6px 18px;box-shadow:0 10px 30px rgba(15,35,28,.25)}
+  .buscador svg{flex:none;width:18px;height:18px;stroke:var(--texto-sec)}
+  .buscador input{flex:1;border:0;outline:0;background:transparent;font:inherit;font-size:15px;color:var(--texto);padding:12px 12px}
+  .buscador button{flex:none;width:46px;height:46px;border:0;border-radius:11px;background:var(--dorado);color:#fff;cursor:pointer;display:grid;place-items:center;transition:filter .2s}
+  .buscador button:hover{filter:brightness(1.08)}
+  .stats{display:flex;gap:0;margin-top:30px;position:relative;z-index:1}
+  .stat{padding:0 28px;border-left:1px solid rgba(253,251,246,.25)}
+  .stat:first-child{padding-left:0;border-left:0}
+  .stat b{display:block;font-family:'Fraunces',serif;font-size:24px;font-weight:600}
+  .stat span{font-size:13px;color:#cfe0d4}
+
+  /* Carrusel */
+  .carrusel{position:relative;border-radius:var(--radio);overflow:hidden;min-height:340px;background:#dde4dc}
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s}
+  .slide.activa{opacity:1}
+  .slide .velo{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,40,33,0) 35%,rgba(20,40,33,.72))}
+  .slide-pie{position:absolute;left:18px;right:18px;bottom:18px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px);border-radius:16px;padding:12px 16px;color:#fff}
+  .slide-pie .icono{flex:none;width:38px;height:38px;border-radius:50%;background:#f1ede2;display:grid;place-items:center;color:var(--verde)}
+  .slide-pie b{font-weight:600;font-size:15px}
+  .slide-pie small{display:block;font-size:12px;opacity:.85}
+  .car-flecha{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.9);color:var(--verde);cursor:pointer;display:grid;place-items:center;z-index:2;transition:background .2s}
+  .car-flecha:hover{background:#fff}
+  .car-flecha.izq{left:14px}.car-flecha.der{right:14px}
+  .puntos{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
+  .puntos i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:background .2s}
+  .puntos i.activa{background:#fff}
+
+  /* ===== Secciones ===== */
+  .seccion{padding:56px 0 8px}
+  .seccion-cab{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:24px}
+  .seccion-cab .kicker{color:var(--verde-oscuro)}
+  .seccion-cab h2{font-size:clamp(22px,3vw,30px);font-weight:600;color:var(--verde-oscuro);margin-top:6px}
+  .ver-todo{font-size:14px;font-weight:600;color:var(--verde-oscuro);display:inline-flex;align-items:center;gap:6px}
+
+  /* Tarjetas de categoría */
+  .rejilla-cat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+  @media(max-width:980px){.rejilla-cat{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.rejilla-cat{grid-template-columns:1fr}}
+  .tarjeta{background:var(--blanco);border:1px solid var(--borde);border-radius:var(--radio);overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+  .tarjeta:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(33,72,61,.12)}
+  .tarjeta .foto{height:170px;overflow:hidden}
+  .tarjeta .cuerpo{padding:22px 22px 24px;display:flex;flex-direction:column;flex:1}
+  .etiqueta{align-self:flex-start;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;background:#eef3ec;color:var(--verde-oscuro);border-radius:999px;padding:5px 12px}
+  .tarjeta h3{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--verde-oscuro);margin-top:14px}
+  .tarjeta p{font-size:14px;color:var(--texto-sec);margin-top:8px;flex:1}
+  .tarjeta .liga{margin-top:18px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--verde-oscuro)}
+  .tarjeta .liga svg{transition:transform .2s}
+  .tarjeta:hover .liga svg{transform:translate(2px,-2px)}
+
+  /* ===== Biblioteca ===== */
+  .filtros{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+  .chip{border:1px solid var(--borde);background:var(--blanco);color:var(--texto-sec);font:inherit;font-size:13px;font-weight:500;border-radius:999px;padding:8px 16px;cursor:pointer;transition:all .2s}
+  .chip:hover{border-color:var(--verde)}
+  .chip.activa{background:var(--verde);border-color:var(--verde);color:#fff}
+  .rejilla-rec{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:980px){.rejilla-rec{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.rejilla-rec{grid-template-columns:1fr}}
+  .recurso{background:var(--blanco);border:1px solid var(--borde);border-radius:18px;padding:22px;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+  .recurso:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(33,72,61,.10)}
+  .recurso h3{font-size:17px;font-weight:600;color:var(--verde-oscuro);margin-top:12px}
+  .recurso p{font-size:13.5px;color:var(--texto-sec);margin-top:6px;flex:1}
+  .recurso .liga{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--verde-oscuro)}
+  .vacio{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--texto-sec);border:1px dashed var(--borde);border-radius:18px}
+  .resultado-num{font-size:13px;color:var(--texto-sec);margin:-12px 0 18px}
+
+  /* Desplegable de plantillas */
+  .toggle{border:0;background:none;cursor:pointer;font:inherit;padding:0}
+  .toggle .flecha{transition:transform .25s}
+  .desplegable.abierto .toggle .flecha{transform:rotate(180deg)}
+  .sub-lista{list-style:none;display:none;margin-top:14px;border-top:1px solid var(--borde);padding-top:6px}
+  .desplegable.abierto .sub-lista{display:block}
+  .sub-lista li + li{border-top:1px solid #f0f3ee}
+  .sub-lista a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px;font-size:14px;color:var(--verde-oscuro);border-radius:8px;transition:background .15s,padding .15s}
+  .sub-lista a:hover{background:#f2f6f1;padding-left:10px;padding-right:10px}
+  .sub-lista b{font-weight:600}
+
+  /* ===== Ayuda ===== */
+  .ayuda{background:var(--verde);color:#fdfbf6;border-radius:var(--radio);padding:44px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden}
+  .ayuda::after{content:'';position:absolute;width:260px;height:260px;border-radius:50%;border:1px solid rgba(253,251,246,.3);right:-80px;bottom:-120px}
+  .ayuda h2{font-family:'Fraunces',serif;font-size:26px;font-weight:600}
+  .ayuda p{color:#dfe9e1;max-width:48ch;margin-top:8px}
+  .boton-dorado{display:inline-flex;align-items:center;gap:8px;background:var(--dorado);color:#fff;font-weight:600;font-size:15px;border-radius:13px;padding:14px 26px;transition:filter .2s;position:relative;z-index:1}
+  .boton-dorado:hover{filter:brightness(1.08)}
+
+  footer{margin-top:64px;border-top:1px solid var(--borde);padding:28px 0 36px}
+  .pie{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--texto-sec)}
+  .pie nav{display:flex;gap:20px}
+  .pie a:hover{color:var(--verde-oscuro)}
+
+  :focus-visible{outline:2px solid var(--dorado);outline-offset:2px;border-radius:4px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenedor barra">
+    <a class="marca" href="#inicio" aria-label="Gerencia CDMX, inicio">
+      <!-- Estrella de cuatro puntas (Nova Legado) -->
+      <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" stroke="#21483d" stroke-width="1.4" stroke-dasharray="4 5"/>
+        <path d="M20 3 L23 17 L34 20 L23 23 L20 34 L17 23 L6 20 L17 17 Z" fill="#21483d"/>
+        <rect x="18.4" y="18.4" width="3.2" height="3.2" transform="rotate(45 20 20)" fill="#c89a4a"/>
+      </svg>
+      Gerencia CDMX
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#inicio">Inicio</a>
+      <a href="#categorias">Categorías</a>
+      <a href="#recursos">Recursos</a>
+    </nav>
+  </div>
+</header>
+
+<main class="contenedor" id="inicio">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-tarjeta">
+      <p class="kicker">Centro interno de consulta</p>
+      <h1 class="display">Todo lo que necesitas, en un solo lugar.</h1>
+      <p>Encuentra manuales, portales y guías clave para acompañar cada proceso de forma más ágil y segura.</p>
+      <div class="buscador">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="busqueda" type="search" placeholder="Buscar manual, portal o tema..." aria-label="Buscar en la biblioteca">
+        <button type="button" aria-label="Buscar" onclick="irARecursos()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="stat-manuales">0</b><span>Manuales</span></div>
+        <div class="stat"><b id="stat-portales">0</b><span>Portales</span></div>
+        <div class="stat"><b>24/7</b><span>Disponible</span></div>
+      </div>
+    </div>
+
+    <!-- Carrusel -->
+    <div class="carrusel" id="carrusel" aria-label="Galería">
+      <button class="car-flecha izq" aria-label="Anterior" onclick="moverSlide(-1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="car-flecha der" aria-label="Siguiente" onclick="moverSlide(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+      <div class="puntos" id="puntos"></div>
+    </div>
+  </section>
+
+  <!-- ===== CATEGORÍAS ===== -->
+  <section class="seccion" id="categorias">
+    <div class="seccion-cab">
+      <div>
+        <p class="kicker">Explora por categoría</p>
+        <h2 class="display">Accesos directos del equipo</h2>
+      </div>
+      <a class="ver-todo" href="#recursos">Ver todos
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg>
+      </a>
+    </div>
+    <div class="rejilla-cat" id="rejilla-categorias"></div>
+  </section>
+
+  <!-- ===== BIBLIOTECA ===== -->
+  <section class="seccion" id="recursos">
+    <div class="seccion-cab">
+      <div>
+        <p class="kicker">Biblioteca de recursos</p>
+        <h2 class="display">Manuales, herramientas y ligas clave</h2>
+      </div>
+    </div>
+    <div class="filtros" id="filtros" role="tablist" aria-label="Filtrar por categoría"></div>
+    <p class="resultado-num" id="resultado-num"></p>
+    <div class="rejilla-rec" id="rejilla-recursos"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="contenedor pie">
+    <span>Biblioteca interna para apoyar el trabajo de tu equipo.</span>
+    <nav aria-label="Pie de página">
+      <a href="#inicio">Volver arriba</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   PANEL DE ADMINISTRADOR — Google Sheets
+   El carrusel y la biblioteca se cargan desde tu hoja de cálculo.
+   Solo quien puede editar la hoja puede cambiar el portal.
+
+   ⚠️ CAMBIA AQUÍ: pega el ID de tu hoja (lo que va entre /d/ y /edit en la URL).
+   Ejemplo: https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
+   La hoja debe estar compartida como "Cualquier persona con el enlace: Lector".
+
+   Pestaña "Carrusel" → columnas: texto | subtitulo | imagen_url
+   Pestaña "Recursos" → columnas: categoria | titulo | descripcion | url | tipo
+   (tipo: manual, portal o herramienta — alimenta los contadores del hero)
+
+   Si la hoja no carga (sin internet, ID vacío), el portal usa los datos
+   de respaldo definidos abajo, así nunca se ve vacío.
+   ===================================================================== */
+const SHEET_ID = "1p9RdnD2ZWZSu1NrIiqJneBXBeorjof7XG_EoZZF2XVg";
+
+/* ===================== datos de respaldo ===================== */
+
+const CATEGORIAS = [
+  {
+    tag: "Documentación",
+    titulo: "Manuales",
+    descripcion: "Folletos, condiciones generales y guías para 16 productos SMNYL (45 documentos).",
+    textoLiga: "Ver manuales",
+    url: "./manuales-productos.html",
+    foto: "https://images.pexels.com/photos/12903168/pexels-photo-12903168.jpeg?auto=compress&cs=tinysrgb&w=800"
+  },
+  {
+    tag: "Sistemas",
+    titulo: "Portales",
+    descripcion: "Acceso al Portal de Asesores y plataformas oficiales de SMNYL.",
+    textoLiga: "Ir al portal",
+    url: "https://www.asesordeseguros.com.mx/",
+    foto: "https://images.pexels.com/photos/3184343/pexels-photo-3184343.jpeg?auto=compress&cs=tinysrgb&w=800"
+  },
+  {
+    tag: "Capacitación",
+    titulo: "CDP",
+    descripcion: "Centro de Desarrollo Profesional, certificaciones y cursos de los distintos productos.",
+    textoLiga: "Ver guías",
+    url: "https://smnyldesarrollo.sabacloud.com/Saba/Web_wdk/NA10P1PRD045/index/prelogin.rdf",
+    foto: "https://images.pexels.com/photos/9304682/pexels-photo-9304682.jpeg?auto=compress&cs=tinysrgb&w=800"
+  },
+  {
+    tag: "Herramientas",
+    titulo: "Cotizador",
+    descripcion: "Cotiza en línea con SOL: Solución en Línea Monterrey.",
+    textoLiga: "Abrir cotizador",
+    url: "https://www.solucionlinemonterrey.mx/CotizadorWebApp/Forms/Firma.aspx",
+    foto: "https://images.pexels.com/photos/8370436/pexels-photo-8370436.jpeg?auto=compress&cs=tinysrgb&w=800"
+  },
+  {
+    tag: "Cobertura",
+    titulo: "Niveles GMM",
+    descripcion: "Consulta interactiva de los 640 hospitales convenidos por nivel y estado de la república.",
+    textoLiga: "Abrir centro de consulta",
+    // ⚠️ CAMBIA AQUÍ si subes el archivo a otra ruta o subdominio.
+    url: "./niveles-hospitalarios-gmm.html",
+    foto: "https://images.pexels.com/photos/127873/pexels-photo-127873.jpeg?auto=compress&cs=tinysrgb&w=800"
+  }
+];
+
+let RECURSOS = [
+  {
+    categoria: "Herramientas",
+    titulo: "Análisis de Necesidades Financieras",
+    descripcion: "Asistente ANF interactivo para sesiones con clientes, con exportación a PDF.",
+    url: "https://novalegado.github.io/NovaANF/ANF_24.html",
+    tipo: "herramienta"
+  },
+  {
+    categoria: "Herramientas",
+    titulo: "Niveles Hospitalarios GMM",
+    descripcion: "Centro de consulta interactivo con los 640 hospitales convenidos. Filtra por nivel (Pleno, Íntegro, Práctico) y estado.",
+    url: "./niveles-hospitalarios-gmm.html",
+    tipo: "herramienta"
+  },
+  {
+    categoria: "Trámites",
+    titulo: "Matriz de trámites digitales",
+    descripcion: "Catálogo oficial de trámites digitales (marzo 2026, versión 22) en PDF.",
+    url: "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Servicios/Catalogo%20de%20Formatos/Matriz%20de%20Tramites/Matriz%20de%20tr%C3%A1mites%20digitales_marzo26_version22.pdf",
+    tipo: "manual"
+  },
+  {
+    categoria: "Reuniones",
+    titulo: "Sala Zoom de la agencia",
+    descripcion: "Liga directa a la sala permanente para juntas, CAP y sesiones de equipo.",
+    url: "https://us06web.zoom.us/j/3723759281",
+    tipo: "portal"
+  },
+  {
+    categoria: "Portales",
+    titulo: "Portal de Asesores",
+    descripcion: "Sitio oficial con servicios, formatos y consultas para asesores SMNYL.",
+    url: "https://www.asesordeseguros.com.mx/",
+    tipo: "portal"
+  },
+  {
+    categoria: "Capacitación",
+    titulo: "CDP — Centro de Desarrollo Profesional",
+    descripcion: "Plataforma de cursos y certificaciones de producto.",
+    url: "https://smnyldesarrollo.sabacloud.com/Saba/Web_wdk/NA10P1PRD045/index/prelogin.rdf",
+    tipo: "portal"
+  },
+  {
+    categoria: "Herramientas",
+    titulo: "Cotizador SOL",
+    descripcion: "Solución en Línea Monterrey para cotizaciones.",
+    url: "https://www.solucionlinemonterrey.mx/CotizadorWebApp/Forms/Firma.aspx",
+    tipo: "portal"
+  },
+  /* --- Plantillas de producto: todas las filas con categoria "Plantillas"
+         se agrupan automáticamente en una sola tarjeta desplegable --- */
+  { categoria: "Plantillas", titulo: "ORVI", descripcion: "Ordinario de Vida: protección permanente para la familia.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQDwMfYdAGyTRrbyQUA7UCgmAcc4q-sZZQGr_o__E0f7Ye0?e=qDiNDk", tipo: "herramienta" },
+  { categoria: "Plantillas", titulo: "SEGUBECA", descripcion: "Asegura la educación de tus hijos, pase lo que pase.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQDd18595niVQYShoPzKKfFRAXLKWcJqlUEUWasTfjvsKb0?e=MIfyc0", tipo: "herramienta" },
+  { categoria: "Plantillas", titulo: "GMM", descripcion: "Gastos Médicos Mayores: respaldo ante lo inesperado.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQCuK3DMR4oqRKwI_OovcbwpAetrqXEj1f9CPRMecWlTAHE?e=ldvY4G", tipo: "herramienta" },
+  { categoria: "Plantillas", titulo: "VIDA MUJER", descripcion: "Protección y ahorro diseñados para ella.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQD0fstKIEPtT6MXvBDYe1QeAXTC9Rn05LafI_vXCLWUKrs?e=kYczFe", tipo: "herramienta" },
+  { categoria: "Plantillas", titulo: "ISER", descripcion: "Inversión y seguro de retiro: tu futuro, asegurado.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQDT_wEetNU7ToO_8WkYFGS5Ac-PkzENwUzNEJD5bVZoKBM?e=Q1E1kI", tipo: "herramienta" },
+  { categoria: "Plantillas", titulo: "OBJETIVO VIDA", descripcion: "Ahorro con protección para alcanzar tus metas.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQCvb_ROT-CCQI2URAU_C5cOAc6HyxEpnrYdIm4HImYxogs?e=Qid4gP", tipo: "herramienta" },
+  { categoria: "Plantillas", titulo: "GMM FLEX", descripcion: "Gastos médicos con coberturas a tu medida.", url: "https://1drv.ms/p/c/1a61891e3062eae1/IQCcbWWpEVutSoMUG6Io93GiAS0OZtRJ24MWm3HUvrcBou4?e=wIqrpy", tipo: "herramienta" }
+  /* ➕ Agrega aquí tus 48 manuales siguiendo el mismo formato:
+  ,{
+    categoria: "Manuales",
+    titulo: "Nombre del manual",
+    descripcion: "Breve descripción de qué resuelve.",
+    url: "https://...",
+    tipo: "manual"
+  }
+  */
+];
+
+let SLIDES = [
+  { texto: "Centro de conocimiento", sub: "Todo lo que tu equipo necesita", foto: "https://images.pexels.com/photos/2410050/pexels-photo-2410050.jpeg?auto=compress&cs=tinysrgb&w=900" },
+  { texto: "Colaboración en equipo", sub: "Procesos compartidos y claros", foto: "https://images.pexels.com/photos/3184343/pexels-photo-3184343.jpeg?auto=compress&cs=tinysrgb&w=900" },
+  { texto: "Herramientas digitales", sub: "Cotiza, analiza y da seguimiento", foto: "https://images.pexels.com/photos/577210/pexels-photo-577210.jpeg?auto=compress&cs=tinysrgb&w=900" },
+  { texto: "Éxito compartido", sub: "Crecemos como agencia", foto: "https://images.pexels.com/photos/17065743/pexels-photo-17065743.jpeg?auto=compress&cs=tinysrgb&w=900" }
+];
+
+/* ===================== fin de la zona editable ===================== */
+
+const $ = s => document.querySelector(s);
+const esc = t => t.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* Categorías */
+$('#rejilla-categorias').innerHTML = CATEGORIAS.map(c => `
+  <article class="tarjeta">
+    <div class="foto"><img src="${c.foto}" alt="" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(160deg,#2e5a4c,#21483d)';this.style.display='none'"></div>
+    <div class="cuerpo">
+      <span class="etiqueta">${esc(c.tag)}</span>
+      <h3>${esc(c.titulo)}</h3>
+      <p>${esc(c.descripcion)}</p>
+      <a class="liga" href="${c.url}" ${c.url.startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>
+        ${esc(c.textoLiga)}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg>
+      </a>
+    </div>
+  </article>`).join('');
+
+/* Filtros */
+const cats = ['Todos', ...new Set(RECURSOS.map(r => r.categoria))];
+let filtroActivo = 'Todos';
+$('#filtros').innerHTML = cats.map(c =>
+  `<button class="chip${c === 'Todos' ? ' activa' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+$('#filtros').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  filtroActivo = b.dataset.cat;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('activa', x === b));
+  pintarRecursos();
+});
+
+/* Búsqueda en vivo + navegación */
+function irARecursos() {
+  document.getElementById('recursos').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+let yaScroll = false;
+$('#busqueda').addEventListener('input', e => {
+  pintarRecursos();
+  // Auto-scroll suave al primer caracter, una sola vez por sesión de búsqueda
+  if (e.target.value.length === 1 && !yaScroll) {
+    yaScroll = true;
+    irARecursos();
+  }
+  if (e.target.value.length === 0) yaScroll = false;
+});
+$('#busqueda').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); irARecursos(); }
+});
+
+function pintarRecursos() {
+  const q = $('#busqueda').value.trim().toLowerCase();
+  const coincide = r =>
+    (filtroActivo === 'Todos' || r.categoria === filtroActivo) &&
+    (!q || (r.titulo + ' ' + r.descripcion + ' ' + r.categoria).toLowerCase().includes(q));
+
+  const esPlantilla = r => r.categoria.trim().toLowerCase() === 'plantillas';
+  const normales = RECURSOS.filter(r => !esPlantilla(r) && coincide(r));
+  const plantillas = RECURSOS.filter(r => esPlantilla(r) && coincide(r));
+  const total = normales.length + plantillas.length;
+
+  $('#resultado-num').textContent = q || filtroActivo !== 'Todos'
+    ? `${total} resultado${total === 1 ? '' : 's'}` : '';
+
+  let html = normales.map(r => `
+    <article class="recurso">
+      <span class="etiqueta">${esc(r.categoria)}</span>
+      <h3>${esc(r.titulo)}</h3>
+      <p>${esc(r.descripcion)}</p>
+      <a class="liga" href="${r.url}" target="_blank" rel="noopener">Abrir recurso
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg>
+      </a>
+    </article>`).join('');
+
+  /* Tarjeta desplegable de plantillas: misma rejilla, mismo esquema */
+  if (plantillas.length) {
+    const abierto = q.length > 0; // si hay búsqueda activa, se muestra abierta
+    html += `
+    <article class="recurso desplegable${abierto ? ' abierto' : ''}" id="card-plantillas">
+      <span class="etiqueta">Plantillas</span>
+      <h3>Plantillas de producto</h3>
+      <p>Presentaciones listas para tus citas: ${plantillas.length} producto${plantillas.length === 1 ? '' : 's'} disponible${plantillas.length === 1 ? '' : 's'}.</p>
+      <button class="liga toggle" type="button" aria-expanded="${abierto}" onclick="togglePlantillas(this)">
+        Ver plantillas
+        <svg class="flecha" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <ul class="sub-lista">
+        ${plantillas.map(p => `
+        <li>
+          <a href="${p.url}" target="_blank" rel="noopener" title="${esc(p.descripcion)}">
+            <b>${esc(p.titulo)}</b>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </a>
+        </li>`).join('')}
+      </ul>
+    </article>`;
+  }
+
+  $('#rejilla-recursos').innerHTML = html ||
+    `<div class="vacio">No hay resultados para tu búsqueda.<br>Prueba con otra palabra o limpia el filtro.</div>`;
+}
+function togglePlantillas(btn) {
+  const card = btn.closest('.desplegable');
+  const abierto = card.classList.toggle('abierto');
+  btn.setAttribute('aria-expanded', abierto);
+}
+pintarRecursos();
+
+/* Contadores reales */
+function pintarContadores() {
+  $('#stat-manuales').textContent = RECURSOS.filter(r => r.tipo === 'manual' || r.tipo === 'herramienta').length;
+  $('#stat-portales').textContent = RECURSOS.filter(r => r.tipo === 'portal').length;
+}
+pintarContadores();
+
+/* Filtros (reconstruibles cuando llegan datos nuevos) */
+function pintarFiltros() {
+  const cats2 = ['Todos', ...new Set(RECURSOS.map(r => r.categoria))];
+  if (!cats2.includes(filtroActivo)) filtroActivo = 'Todos';
+  $('#filtros').innerHTML = cats2.map(c =>
+    `<button class="chip${c === filtroActivo ? ' activa' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+}
+
+/* Carrusel */
+const carrusel = $('#carrusel'), puntos = $('#puntos');
+let slideActual = 0, autoCar = null;
+function construirCarrusel() {
+  carrusel.querySelectorAll('.slide').forEach(e => e.remove());
+  puntos.innerHTML = '';
+  SLIDES.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'slide' + (i === 0 ? ' activa' : '');
+    d.innerHTML = `<img src="${s.foto}" alt="" loading="lazy" onerror="this.style.display='none'"><div class="velo"></div>
+      <div class="slide-pie">
+        <span class="icono"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/></svg></span>
+        <span><b>${esc(s.texto)}</b><small>${esc(s.sub)}</small></span>
+      </div>`;
+    carrusel.insertBefore(d, carrusel.querySelector('.car-flecha'));
+    const p = document.createElement('i');
+    p.className = i === 0 ? 'activa' : '';
+    p.onclick = () => irSlide(i);
+    puntos.appendChild(p);
+  });
+  slideActual = 0;
+  clearInterval(autoCar);
+  autoCar = setInterval(() => moverSlide(1), 6000);
+}
+function irSlide(n) {
+  const sl = carrusel.querySelectorAll('.slide'), pt = puntos.querySelectorAll('i');
+  if (!sl.length) return;
+  sl[slideActual].classList.remove('activa'); pt[slideActual].classList.remove('activa');
+  slideActual = (n + sl.length) % sl.length;
+  sl[slideActual].classList.add('activa'); pt[slideActual].classList.add('activa');
+}
+function moverSlide(dir) { irSlide(slideActual + dir); clearInterval(autoCar); autoCar = setInterval(() => moverSlide(1), 6000); }
+construirCarrusel();
+
+/* =====================================================================
+   CARGA DESDE GOOGLE SHEETS
+   ===================================================================== */
+function parseCSV(texto) {
+  const filas = []; let fila = [], celda = '', dentro = false;
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i];
+    if (dentro) {
+      if (c === '"' && texto[i + 1] === '"') { celda += '"'; i++; }
+      else if (c === '"') dentro = false;
+      else celda += c;
+    } else if (c === '"') dentro = true;
+    else if (c === ',') { fila.push(celda); celda = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && texto[i + 1] === '\n') i++;
+      fila.push(celda); filas.push(fila); fila = []; celda = '';
+    } else celda += c;
+  }
+  if (celda !== '' || fila.length) { fila.push(celda); filas.push(fila); }
+  return filas.filter(f => f.some(x => x.trim() !== ''));
+}
+
+function filasAObjetos(filas) {
+  const cab = filas[0].map(h => h.trim().toLowerCase());
+  return filas.slice(1).map(f => {
+    const o = {};
+    cab.forEach((h, i) => o[h] = (f[i] || '').trim());
+    return o;
+  });
+}
+
+async function cargarHoja(pestania) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(pestania)}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(pestania + ': ' + r.status);
+  return filasAObjetos(parseCSV(await r.text()));
+}
+
+(async () => {
+  if (!SHEET_ID || SHEET_ID === 'PEGA_AQUI_TU_ID') return; // sin hoja: usa respaldo
+  try {
+    const [slidesHoja, recursosHoja] = await Promise.all([
+      cargarHoja('Carrusel').catch(() => null),
+      cargarHoja('Recursos').catch(() => null)
+    ]);
+    if (slidesHoja && slidesHoja.length) {
+      const nuevosSlides = slidesHoja
+        .filter(s => s.texto)
+        .map(s => ({ texto: s.texto, sub: s.subtitulo || '', foto: s.imagen_url || '' }));
+      // Solo sobreescribir si hay slides válidos en la Sheet
+      if (nuevosSlides.length > 0) {
+        SLIDES = nuevosSlides;
+        construirCarrusel();
+      }
+    }
+    if (recursosHoja && recursosHoja.length) {
+      const nuevosRecursos = recursosHoja
+        .filter(r => r.titulo && r.url)
+        .map(r => ({
+          categoria: r.categoria || 'General',
+          titulo: r.titulo,
+          descripcion: r.descripcion || '',
+          url: r.url,
+          tipo: (r.tipo || 'manual').toLowerCase()
+        }));
+      // Solo sobreescribir si la Sheet realmente tiene recursos válidos
+      if (nuevosRecursos.length > 0) {
+        RECURSOS = nuevosRecursos;
+        pintarFiltros();
+        pintarRecursos();
+        pintarContadores();
+      }
+    }
+  } catch (e) {
+    console.warn('No se pudo leer la hoja, usando datos de respaldo:', e);
+  }
+})();
+</script>
+</body>
+</html>
