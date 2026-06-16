@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manuales de Productos · Centro Interno de Consulta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#21483d;
+    --verde-oscuro:#1f3d32;
+    --verde-suave:#2e5a4c;
+    --crema:#f6f2ea;
+    --blanco:#ffffff;
+    --dorado:#c89a4a;
+    --borde:#e0e7df;
+    --texto:#27332d;
+    --texto-sec:#6e7c73;
+    --radio:24px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Jost',sans-serif;background:var(--crema);color:var(--texto);line-height:1.6}
+  .display{font-family:'Fraunces',serif;letter-spacing:-0.02em}
+  a{color:inherit;text-decoration:none}
+  .contenedor{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  header{position:sticky;top:0;z-index:50;background:rgba(246,242,234,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--borde)}
+  .barra{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .marca{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.14em;font-size:14px;text-transform:uppercase;color:var(--verde-oscuro)}
+  .marca svg{width:30px;height:30px}
+  .volver{color:var(--texto-sec);font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;transition:color .2s}
+  .volver:hover{color:var(--verde-oscuro)}
+
+  .hero{position:relative;overflow:hidden;background:var(--verde);color:#fdfbf6;border-radius:var(--radio);padding:40px 44px;margin:32px 0 24px}
+  .hero::before{content:'';position:absolute;width:340px;height:340px;border-radius:50%;background:var(--verde-suave);top:-140px;right:-120px}
+  .hero::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;border:1px solid rgba(253,251,246,.35);bottom:-90px;right:60px}
+  .hero > *{position:relative;z-index:1}
+  .kicker{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#cfe0d4;margin-bottom:14px}
+  .hero h1{font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:12px}
+  .hero p{max-width:54ch;color:#dfe9e1;margin-bottom:20px}
+  .buscador{display:flex;align-items:center;background:var(--blanco);border-radius:14px;padding:6px 6px 6px 18px;max-width:540px;box-shadow:0 10px 30px rgba(15,35,28,.25)}
+  .buscador svg{flex:none;width:18px;height:18px;stroke:var(--texto-sec)}
+  .buscador input{flex:1;border:0;outline:0;background:transparent;font:inherit;font-size:15px;color:var(--texto);padding:12px}
+  .buscador .stat-line{margin-top:18px;font-size:14px;color:#dfe9e1}
+  .buscador .stat-line b{color:#fff;font-weight:600}
+  .hero-stats{margin-top:18px;font-size:14px;color:#dfe9e1}
+  .hero-stats b{color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:18px}
+
+  .filtros{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 24px}
+  .chip{border:1px solid var(--borde);background:var(--blanco);color:var(--texto-sec);font:inherit;font-size:13px;font-weight:500;border-radius:999px;padding:7px 14px;cursor:pointer;transition:all .2s}
+  .chip:hover{border-color:var(--verde)}
+  .chip.activa{background:var(--verde);border-color:var(--verde);color:#fff}
+
+  .productos{display:flex;flex-direction:column;gap:14px;margin-bottom:60px}
+  .producto{background:var(--blanco);border:1px solid var(--borde);border-radius:18px;overflow:hidden;transition:box-shadow .2s}
+  .producto:hover{box-shadow:0 8px 22px rgba(33,72,61,.08)}
+  .producto-cab{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;user-select:none}
+  .producto-cab:hover{background:#fafaf3}
+  .producto-cab h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--verde-oscuro)}
+  .producto-meta{font-size:13px;color:var(--texto-sec)}
+  .producto-meta b{color:var(--dorado);font-weight:600}
+  .flecha{width:20px;height:20px;transition:transform .25s;color:var(--verde)}
+  .producto.abierto .flecha{transform:rotate(180deg)}
+  .producto-docs{display:none;border-top:1px solid var(--borde);padding:6px 0}
+  .producto.abierto .producto-docs{display:block}
+  .doc{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;border-bottom:1px solid #f0f3ee;transition:background .15s,padding .15s}
+  .doc:last-child{border-bottom:0}
+  .doc:hover{background:#f6f8f4;padding-left:30px}
+  .doc-titulo{font-size:14px;font-weight:500;color:var(--verde-oscuro)}
+  .doc .liga{font-size:13px;font-weight:600;color:var(--verde);display:inline-flex;align-items:center;gap:6px;flex:none}
+  .doc .liga svg{transition:transform .2s}
+  .doc:hover .liga svg{transform:translate(2px,-2px)}
+
+  .vacio{text-align:center;padding:48px 20px;color:var(--texto-sec);border:1px dashed var(--borde);border-radius:18px}
+  .resultado-num{font-size:13px;color:var(--texto-sec);margin-bottom:14px}
+
+  @media(max-width:560px){
+    .hero{padding:28px 24px}
+    .producto-cab{padding:14px 18px}
+    .doc{padding:12px 18px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenedor barra">
+    <a class="marca" href="index.html">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="17" stroke="#21483d" stroke-width="1.4" stroke-dasharray="4 5"/>
+        <path d="M20 3 L23 17 L34 20 L23 23 L20 34 L17 23 L6 20 L17 17 Z" fill="#21483d"/>
+        <rect x="18.4" y="18.4" width="3.2" height="3.2" transform="rotate(45 20 20)" fill="#c89a4a"/>
+      </svg>
+      Gerencia CDMX
+    </a>
+    <a class="volver" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      Volver al portal
+    </a>
+  </div>
+</header>
+
+<main class="contenedor">
+
+  <section class="hero">
+    <p class="kicker">Centro Interno de Consulta</p>
+    <h1 class="display">Manuales de productos</h1>
+    <p>Folletos, condiciones generales, factsheets y guías de acompañamiento para cada producto SMNYL. Selecciona un producto para ver los documentos disponibles.</p>
+    <div class="buscador">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="busqueda" type="search" placeholder="Buscar producto o documento..." autocomplete="off">
+    </div>
+    <div class="hero-stats"><b id="stat-productos">0</b> productos · <b id="stat-docs">0</b> documentos disponibles</div>
+  </section>
+
+  <div class="filtros" id="filtros"></div>
+  <p class="resultado-num" id="resultado-num"></p>
+  <div class="productos" id="productos"></div>
+
+</main>
+
+<script>
+const MANUALES = {"Generales": [{"label": "Politica De Cambios Gastos Medicos Mayores Individual", "url": "https://www.smnyl-clientes.com.mx/PolicambiosGMMI/Home/"}], "Alfa Medical": [{"label": "Folleto Principal", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/FOLLETO%20DERECHOS%20B%C3%81SICOS%20AM.pdf?ver=2026-05-13-093341-383&timestamp=1781292016870"}, {"label": "Condiciones Generales Anteriores 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Condiciones%20Generales/2026/Alfa%20Medical%20Anteriores.pdf?ver=2026-06-01-072802-487&timestamp=1781292770729"}, {"label": "Condiciones Generales Nuevos 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Condiciones%20Generales/2026/Alfa%20Medical%20Nuevos.pdf?ver=2026-06-01-072802-610&timestamp=1781292867821"}, {"label": "Conoce Tu Producto", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Materiales%20Comerciales/Actualizaci%C3%B3n%202026/Conoce%20tu%20Producto%20Alfa%20Medical.pdf?ver=2026-03-18-090811-623&timestamp=1781292937733"}, {"label": "Deducibles Aplicables", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Materiales%20Comerciales/Actualizaci%C3%B3n%202026/Deducibles%20que%20aplican%20para%20Beneficio%20de%20Maternidad.pdf?ver=2026-03-02-104804-393&timestamp=1781293011645"}, {"label": "El Valor De Estar Cubierto", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Materiales%20Comerciales/Actualizaci%C3%B3n%202026/El%20valor%20de%20estar%20cubierto.pdf?ver=2026-02-12-164022-350&timestamp=1781293078050"}, {"label": "Resumen De Actualizacion 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Materiales%20Comerciales/Actualizaci%C3%B3n%202026/Resumen%20Actualizaci%C3%B3n%20GMMI26.pdf?ver=2026-02-12-165859-320&timestamp=1781293130543"}, {"label": "One Pager", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical/Materiales%20Comerciales/Continuidad%20Preferente%20(CCP)/CCP-One-Pager_150825.pdf?ver=2026-05-05-101111-360&timestamp=1781293450048"}], "Alfa Medical Flex": [{"label": "Folleto Principal", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Flex/FOLLETO%20DERECHOS%20B%C3%81SICOS%20FLEX%20INDIVIDUAL.pdf?ver=2026-05-13-093734-773&timestamp=1781292092633"}, {"label": "Condiciones Generales Anteriores 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Flex/Condiciones%20Generales/2026/Alfa%20Medical%20Flex%20Anteriores.pdf?ver=2026-06-01-072356-943&timestamp=1781293667018"}, {"label": "Condiciones Genrales Nuevas 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Flex/Condiciones%20Generales/2026/Alfa%20Medical%20Flex%20Nuevos.pdf?ver=2026-06-01-072357-287&timestamp=1781293740317"}, {"label": "Como Solicito Una Ambulancia", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Flex/Materiales%20Comerciales/Gu%C3%ADas%20de%20acompa%C3%B1amiento/C%C3%B3mo%20solicito%20una%20ambulancia%20de%20urgencia.pdf?ver=2026-02-13-131409-973&timestamp=1781293939408"}, {"label": "Evento Programado", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Flex/Materiales%20Comerciales/Gu%C3%ADas%20de%20acompa%C3%B1amiento/C%C3%B3mo%20solicitar%20un%20evento%20programado.pdf?ver=2026-02-13-131409-787&timestamp=1781294143901"}, {"label": "Ingreso Hospitalario", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Flex/Materiales%20Comerciales/Gu%C3%ADas%20de%20acompa%C3%B1amiento/Qu%C3%A9%20hacer%20en%20un%20ingreso%20hospitalario.pdf?ver=2026-02-13-131410-100&timestamp=1781294217770"}], "Alfa Medical Internacional": [{"label": "Condiciones Generales Anteriores 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Internacional/Condiciones%20Generales/2026/Alfa%20Medical%20Internacional%20Anteriores.pdf?ver=2026-06-01-074701-373&timestamp=1781292156920"}, {"label": "Condiciones Generales Nuevas 2026", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Internacional/Condiciones%20Generales/2026/Alfa%20Medical%20Internacional%20Nuevos.pdf?ver=2026-06-01-074701-387&timestamp=1781292178408"}, {"label": "Como Utilizar Mi Poliza Internacional", "url": "https://www.asesordeseguros.com.mx/Portals/0/PortalAsesores/Archivos/Productos/Salud%20Individual/Alfa%20Medical%20Internacional/Materiales%20Comerciales/Actualizaci%C3%B3n%202026/C%C3%B3mo%20utilizar%20mi%20p%C3%B3liza%20internacional.pdf?ver=2026-06-01-075254-747&timestamp=1781294343218"}], "Imagina Ser": [{"label": "Factsheet", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=Ir4u8BNaz9A%3d&portalid=0&timestamp=1781294594474"}, {"label": "Manual", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=fdaQ18vdm1s%3d&portalid=0&timestamp=1781294664235"}, {"label": "Adapta", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=79yzX8dqOkE%3d&portalid=0&timestamp=1781294702258"}, {"label": "Av", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=cQjCrpL21Tw%3d&portalid=0&timestamp=1781294786624"}, {"label": "Bait", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=JZ9peU_XdkE%3d&portalid=0&timestamp=1781294825485"}, {"label": "Bit", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=76IpMMbbg2g%3d&portalid=0&timestamp=1781294846952"}, {"label": "Bma", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=r2-qUOGUFos%3d&portalid=0&timestamp=1781294868655"}, {"label": "Condiciones Generales Deducible", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=SkBaF5cTMpM%3d&portalid=0&timestamp=1781294905522"}, {"label": "Condiciones Generales", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=KBCqZjiTSuk%3d&portalid=0&timestamp=1781295001880"}, {"label": "Di", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=KxcuC2H18WE%3d&portalid=0&timestamp=1781295019936"}, {"label": "Derechos Basicos", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=pGrEw42X4bc%3d&portalid=0&timestamp=1781295047584"}], "Orvi 99": [{"label": "Manual Orvi", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=OSjMhLThuVc%3d&portalid=0&timestamp=1781295309769"}, {"label": "Folleto", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=pLI3MNgBzl0%3d&portalid=0&timestamp=1781295461622"}, {"label": "Infografia", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=CrOS2-oCjqs%3d&portalid=0&timestamp=1781295493492"}], "Segubeca": [{"label": "Factsheet", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=bFySZ-RRwmA%3d&portalid=0&timestamp=1781295621002"}, {"label": "Manual Ave", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=r7bRflrRLn4%3d&portalid=0&timestamp=1781295284940"}], "Vida Mujer": [{"label": "Manual", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=i7Pta9SozWA%3d&portalid=0&timestamp=1781295701898"}, {"label": "Manual Ave", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=3e-XVlYhpGA%3d&portalid=0&timestamp=1781295679756"}], "Star Dotal": [{"label": "Manual", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=tG0HAS54EtI%3d&portalid=0&timestamp=1781295873591"}, {"label": "Manual Ave", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=rj8vAlusdbI%3d&portalid=0&timestamp=1781295844731"}], "Nuevo Plenitud": [{"label": "Factsheet", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=yc1rRs8UPyM%3d&portalid=0&timestamp=1781295986938"}], "Objetivo Vida": [{"label": "Presentacion", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=hgGeW7dCFPo%3d&portalid=0&timestamp=1781296136354"}], "Realiza": [{"label": "Manual Bases Financieras", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=vY2zIuXLEH4%3d&portalid=0&timestamp=1781296200091"}], "Se Adapta": [{"label": "Factsheet", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=pMCx-yNZMcw%3d&portalid=0&timestamp=1781296286188"}], "Ave": [{"label": "Manual Ave", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=r7bRflrRLn4%3d&portalid=0&timestamp=1781295284940"}], "Hombre Clave": [{"label": "Folleto Principal", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=q-B47ARLpfc%3d&portalid=0&timestamp=1781577988913"}], "Star Temporal": [{"label": "Folleto Principal", "url": "https://www.asesordeseguros.com.mx/LinkClick.aspx?fileticket=60zCWJfcO8k%3d&portalid=0&timestamp=1781578013384"}]};
+
+const $ = s => document.querySelector(s);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const productos = Object.keys(MANUALES);
+$('#stat-productos').textContent = productos.length;
+$('#stat-docs').textContent = productos.reduce((s,p) => s + MANUALES[p].length, 0);
+
+let filtroActivo = 'Todos';
+function pintarFiltros() {
+  $('#filtros').innerHTML = ['Todos', ...productos].map(p =>
+    `<button class="chip${p === filtroActivo ? ' activa' : ''}" data-prod="${esc(p)}">${esc(p)}</button>`
+  ).join('');
+}
+pintarFiltros();
+$('#filtros').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  filtroActivo = b.dataset.prod;
+  pintarFiltros();
+  pintarProductos();
+});
+
+function pintarProductos() {
+  const q = $('#busqueda').value.trim().toLowerCase();
+  const lista = productos
+    .filter(p => filtroActivo === 'Todos' || p === filtroActivo)
+    .map(p => {
+      const docsCoinciden = MANUALES[p].filter(d =>
+        !q || (p + ' ' + d.label).toLowerCase().includes(q)
+      );
+      // Si hay búsqueda y no coincide ningún doc, omitir producto
+      if (q && docsCoinciden.length === 0) return null;
+      return { producto: p, docs: q ? docsCoinciden : MANUALES[p], abierto: q.length > 0 };
+    })
+    .filter(Boolean);
+
+  const totalDocs = lista.reduce((s,p) => s + p.docs.length, 0);
+  $('#resultado-num').textContent = (q || filtroActivo !== 'Todos')
+    ? `${lista.length} producto${lista.length === 1 ? '' : 's'} · ${totalDocs} documento${totalDocs === 1 ? '' : 's'}` : '';
+
+  if (lista.length === 0) {
+    $('#productos').innerHTML = `<div class="vacio">No hay resultados para tu búsqueda.<br>Prueba con otra palabra o limpia el filtro.</div>`;
+    return;
+  }
+
+  $('#productos').innerHTML = lista.map(({producto, docs, abierto}) => `
+    <article class="producto${abierto ? ' abierto' : ''}">
+      <div class="producto-cab" onclick="toggleProducto(this)">
+        <div>
+          <h3>${esc(producto)}</h3>
+          <div class="producto-meta"><b>${docs.length}</b> documento${docs.length === 1 ? '' : 's'}</div>
+        </div>
+        <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="producto-docs">
+        ${docs.map(d => `
+          <div class="doc">
+            <span class="doc-titulo">${esc(d.label)}</span>
+            <a class="liga" href="${esc(d.url)}" target="_blank" rel="noopener">
+              Abrir
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M9 7h8v8"/></svg>
+            </a>
+          </div>
+        `).join('')}
+      </div>
+    </article>
+  `).join('');
+}
+
+function toggleProducto(el) {
+  el.closest('.producto').classList.toggle('abierto');
+}
+
+$('#busqueda').addEventListener('input', pintarProductos);
+pintarProductos();
+</script>
+</body>
+</html>
