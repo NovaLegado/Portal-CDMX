@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calculadora de UDIS · Portal Nova Legado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --verde:#21483d; --verde-hondo:#16322a; --verde-linea:#2e5a4c;
+    --crema:#f6f2ea; --crema-2:#fbf8f1; --dorado:#c89a4a; --dorado-claro:#d9b465;
+    --tinta:#27332d; --mut:#6e7c73; --linea:#e0e7df;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Jost',system-ui,sans-serif;background:var(--crema);color:var(--tinta);
+    -webkit-font-smoothing:antialiased;line-height:1.5;padding:0 0 70px;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px;}
+
+  header{text-align:center;padding:52px 20px 6px;}
+  .kicker{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--dorado);font-weight:600;margin-bottom:12px;}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(2.1rem,7vw,3.2rem);color:var(--verde);line-height:1.05;}
+  .sub-h{color:var(--mut);font-size:1rem;margin-top:12px;}
+
+  .valor-udi{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;
+    background:var(--verde);color:var(--crema);border-radius:14px;padding:16px 20px;margin:26px 0 22px;}
+  .valor-udi label{font-size:.78rem;letter-spacing:.04em;color:var(--dorado-claro);font-weight:600;text-transform:uppercase;}
+  .valor-udi .campo{display:flex;align-items:center;gap:8px;background:rgba(245,239,224,.1);
+    border:1px solid rgba(200,153,61,.5);border-radius:10px;padding:8px 12px;}
+  .valor-udi .campo span{color:var(--dorado-claro);font-weight:600;}
+  .valor-udi input{background:transparent;border:0;color:var(--crema);font-family:inherit;font-size:1.05rem;font-weight:600;width:90px;}
+  .valor-udi input:focus{outline:none;}
+  .valor-udi .fecha{font-size:.74rem;color:#B9C7B6;width:100%;text-align:center;}
+
+  .card{background:#fff;border:1px solid var(--linea);border-radius:18px;padding:22px;margin-bottom:22px;
+    box-shadow:0 18px 40px -30px rgba(31,58,46,.5);}
+  .card h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.3rem;color:var(--verde);margin-bottom:4px;}
+  .card .desc{font-size:.86rem;color:var(--mut);margin-bottom:18px;}
+
+  .fila{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:end;}
+  @media (max-width:520px){ .fila{grid-template-columns:1fr;} .fila .swap{transform:rotate(90deg);justify-self:center;} }
+  .grupo label{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:600;margin-bottom:6px;}
+  .grupo .inp{display:flex;align-items:center;gap:8px;border:1px solid var(--linea);border-radius:12px;padding:11px 14px;background:var(--crema-2);}
+  .grupo .inp:focus-within{outline:2px solid var(--dorado);border-color:var(--dorado);}
+  .grupo .inp span{color:var(--mut);font-weight:600;font-size:.95rem;}
+  .grupo input{border:0;background:transparent;font-family:inherit;font-size:1.1rem;font-weight:600;width:100%;color:var(--verde);}
+  .grupo input:focus{outline:none;}
+  .swap{width:40px;height:40px;border-radius:50%;background:var(--verde);color:var(--crema);display:flex;align-items:center;justify-content:center;}
+  .swap svg{width:18px;height:18px;}
+
+  .controls-proj{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;}
+  @media (max-width:520px){ .controls-proj{grid-template-columns:1fr 1fr;} .controls-proj .g-monto{grid-column:1 / -1;} }
+  .seg{display:flex;border:1px solid var(--linea);border-radius:10px;overflow:hidden;margin-top:6px;}
+  .seg button{flex:1;border:0;background:#fff;color:var(--mut);font-family:inherit;font-size:.8rem;font-weight:600;padding:7px;cursor:pointer;}
+  .seg button.on{background:var(--verde);color:var(--crema);}
+  .hint{font-size:.76rem;color:var(--mut);margin-top:12px;}
+  .hint b{color:var(--dorado);font-weight:600;}
+  .presets{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:12px;}
+  .presets-lab{font-size:.78rem;color:var(--mut);}
+  .presets button{border:1px solid var(--linea);background:#fff;color:var(--verde);cursor:pointer;
+    font-family:inherit;font-size:.82rem;font-weight:600;padding:5px 13px;border-radius:999px;transition:all .2s;}
+  .presets button:hover{border-color:var(--dorado);}
+  .presets button.on{background:var(--verde);color:var(--crema);border-color:var(--verde);}
+  .cal{font-size:.7rem;color:var(--mut);font-weight:400;margin-top:1px;}
+  .meta-input{width:84px;border:1px solid var(--linea);background:#fff;border-radius:999px;padding:5px 12px;
+    font-family:inherit;font-size:.82rem;font-weight:600;color:var(--verde);text-align:center;}
+  .meta-input:focus{outline:2px solid var(--dorado);border-color:var(--dorado);}
+  .btn-img{margin-top:18px;width:100%;border:0;cursor:pointer;background:var(--dorado);color:var(--verde-hondo);
+    font-family:inherit;font-weight:600;font-size:.95rem;padding:14px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;gap:9px;transition:filter .2s;}
+  .btn-img:hover{filter:brightness(1.05);}
+  .btn-img svg{width:18px;height:18px;}
+  .modal-img{position:fixed;inset:0;background:rgba(21,41,31,.82);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;}
+  .modal-img.abierto{display:flex;}
+  .modal-img-box{background:#fff;border-radius:16px;padding:14px;max-width:480px;width:100%;max-height:94vh;overflow:auto;}
+  .modal-img-box img{width:100%;border-radius:10px;border:1px solid var(--linea);display:block;}
+  .modal-img-acc{display:flex;gap:10px;margin-top:12px;}
+  .modal-img-acc a,.modal-img-acc button{flex:1;text-decoration:none;text-align:center;border-radius:10px;padding:12px;
+    font-family:inherit;font-weight:600;font-size:.9rem;cursor:pointer;border:0;}
+  .btn-desc{background:var(--verde);color:var(--crema);}
+  .btn-cerrar2{background:#fff;color:var(--verde);border:1px solid var(--linea)!important;}
+
+  .resultado{margin-top:18px;background:var(--verde);color:var(--crema);border-radius:14px;padding:18px 20px;text-align:center;}
+  .resultado .lab{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dorado-claro);font-weight:600;}
+  .resultado .big{font-family:'Fraunces',serif;font-weight:700;font-size:2rem;margin-top:4px;}
+  .resultado .sub{font-size:.82rem;color:#C7D2C5;margin-top:4px;}
+
+  .tabla-wrap{margin-top:18px;max-height:430px;overflow-y:auto;border:1px solid var(--linea);border-radius:12px;}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;}
+  thead th{position:sticky;top:0;background:var(--crema-2);z-index:1;}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--linea);}
+  th{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  td.peso{font-weight:600;color:var(--verde);}
+  tr:last-child td{border-bottom:0;}
+  .barra{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--dorado-claro),var(--dorado));min-width:2px;}
+  tr.meta td{background:#FBF1DD;font-weight:600;}
+  tr.meta td.peso{color:#8A6420;}
+  .tag-meta{display:inline-block;margin-left:6px;background:var(--dorado);color:var(--verde-hondo);
+    font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;vertical-align:middle;}
+
+  .nota{margin-top:18px;background:#fff;border:1px solid var(--linea);border-left:4px solid var(--dorado);
+    border-radius:12px;padding:15px 17px;font-size:.83rem;color:var(--mut);}
+  .nota b{color:var(--verde);}
+  footer{text-align:center;color:var(--mut);font-size:.78rem;letter-spacing:.04em;padding-top:24px;}
+  footer b{color:var(--verde);}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="kicker">Portal Nova Legado</div>
+      <h1>Calculadora de UDIS</h1>
+      <p class="sub-h">Convierte, cotiza y proyecta el rendimiento en Unidades de Inversión.</p>
+    </header>
+
+    <div class="valor-udi">
+      <label for="udi">Valor del UDI</label>
+      <div class="campo"><span>$</span><input id="udi" type="number" step="0.0001" value="8.8308" /><span>MXN</span></div>
+      <div class="fecha">Valor oficial al 9 de junio de 2026 (DOF) · actualízalo con el valor del día</div>
+    </div>
+
+    <!-- Conversor -->
+    <div class="card">
+      <h2>Conversor</h2>
+      <p class="desc">Escribe en cualquiera de los dos campos y se convierte al instante.</p>
+      <div class="fila">
+        <div class="grupo">
+          <label>Pesos</label>
+          <div class="inp"><span>$</span><input id="pesos" type="text" inputmode="decimal" placeholder="0.00" /></div>
+        </div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l-3 3 3 3M4 13h11M17 14l3-3-3-3M20 11H9"/></svg></div>
+        <div class="grupo">
+          <label>UDIS</label>
+          <div class="inp"><input id="udis" type="text" inputmode="decimal" placeholder="0.00" /><span>UDIS</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proyección -->
+    <div class="card">
+      <h2>Proyección de rendimiento</h2>
+      <p class="desc">Mira cómo crece el valor en pesos de un monto en UDIS conforme la UDI se actualiza con la inflación.</p>
+      <div class="controls-proj">
+        <div class="grupo g-monto">
+          <label>Monto</label>
+          <div class="inp"><input id="monto" type="text" inputmode="decimal" value="100,000" /></div>
+          <div class="seg" id="seg-unidad">
+            <button data-u="udis" class="on">en UDIS</button>
+            <button data-u="pesos">en Pesos</button>
+          </div>
+        </div>
+        <div class="grupo">
+          <label>Plazo (años)</label>
+          <div class="inp"><input id="plazo" type="number" value="20" min="1" max="99" /></div>
+        </div>
+        <div class="grupo">
+          <label>Tasa anual UDI</label>
+          <div class="inp"><input id="tasa" type="number" value="4.5" step="0.1" /><span>%</span></div>
+        </div>
+      </div>
+      <p class="hint">Tasa sugerida: <b>4.5% anual</b> (puedes ajustarla). El último año es tu <b>meta final</b> — escribe el plazo a mano o usa una meta rápida.</p>
+      <div class="presets" id="presets">
+        <span class="presets-lab">Meta rápida:</span>
+        <button data-y="10">10</button><button data-y="15">15</button><button data-y="20">20</button>
+        <button data-y="25">25</button><button data-y="30">30</button><button data-y="35">35</button><button data-y="40">40</button>
+        <span class="presets-lab">años&nbsp;·&nbsp;o escribe:</span>
+        <input id="metaManual" type="number" min="1" max="99" placeholder="ej. 32" class="meta-input" />
+        <span class="presets-lab">años</span>
+      </div>
+
+      <div class="resultado">
+        <div class="lab">Valor proyectado al final del plazo</div>
+        <div class="big" id="res-final">$0</div>
+        <div class="sub" id="res-sub"></div>
+      </div>
+
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Año</th><th class="num">Valor UDI</th><th class="num">Valor en pesos</th><th style="width:30%"></th></tr></thead>
+          <tbody id="tabla"></tbody>
+        </table>
+      </div>
+      <button class="btn-img" id="btnImg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Generar imagen
+      </button>
+    </div>
+
+    <div class="nota">
+      <b>Nota:</b> esta es una base. La proyección asume que la UDI crece a la tasa anual que indiques (la UDI sigue la inflación). Para cotizaciones exactas de cualquier producto de la compañía, aquí integramos después la fórmula real del producto.
+    </div>
+
+    <footer><b>Portal Nova Legado</b> · Calculadora de UDIS</footer>
+  </div>
+
+  <div class="modal-img" id="modalImg" role="dialog" aria-modal="true">
+    <div class="modal-img-box">
+      <img id="imgPreview" alt="Proyección en UDIS" />
+      <div class="modal-img-acc">
+        <a id="descargar" class="btn-desc" download="proyeccion-udis.png">Descargar imagen</a>
+        <button class="btn-cerrar2" id="cerrarImg">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const fMX  = n => n.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:2});
+    const fNum = n => n.toLocaleString('es-MX',{maximumFractionDigits:2});
+    const udi = () => parseFloat($('udi').value) || 0;
+
+    // ---- formato con separador de miles ----
+    function fmtMiles(v){
+      v = (v+'').replace(/,/g,'');
+      const fd = v.indexOf('.');
+      if(fd !== -1) v = v.slice(0,fd+1) + v.slice(fd+1).replace(/\./g,'');
+      v = v.replace(/[^0-9.]/g,'');
+      if(v === '') return '';
+      const parts = v.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+    }
+    function num(el){ return parseFloat(el.value.replace(/,/g,'')) || 0; }
+    function fmtCaret(el){
+      const fromRight = el.value.length - el.selectionStart;
+      el.value = fmtMiles(el.value);
+      const pos = Math.max(0, el.value.length - fromRight);
+      try{ el.setSelectionRange(pos,pos); }catch(e){}
+    }
+
+    // ---- Conversor (dos vías, ambos con miles) ----
+    $('pesos').addEventListener('input', () => {
+      fmtCaret($('pesos'));
+      const p = num($('pesos'));
+      $('udis').value = (p && udi()) ? fmtMiles((p/udi()).toFixed(2)) : '';
+    });
+    $('udis').addEventListener('input', () => {
+      fmtCaret($('udis'));
+      const u = num($('udis'));
+      $('pesos').value = (u && udi()) ? fmtMiles((u*udi()).toFixed(2)) : '';
+    });
+
+    // ---- Proyección ----
+    let unidad = 'udis';
+    $('seg-unidad').addEventListener('click', e => {
+      const b = e.target.closest('button'); if(!b) return;
+      unidad = b.dataset.u;
+      document.querySelectorAll('#seg-unidad button').forEach(x => x.classList.toggle('on', x===b));
+      proyectar();
+    });
+
+    function proyectar(){
+      const baseYear = new Date().getFullYear();
+      const monto = num($('monto'));
+      let plazo = parseInt($('plazo').value) || 1;
+      plazo = Math.max(1, Math.min(99, plazo));
+      const tasa = (parseFloat($('tasa').value) || 0) / 100;
+      const valorHoy = udi();
+      const udisBase = unidad === 'udis' ? monto : (valorHoy ? monto/valorHoy : 0);
+
+      const finalUDI  = valorHoy * Math.pow(1+tasa, plazo);
+      const finalPeso = udisBase * finalUDI;
+      const maxPeso = finalPeso || 1;
+
+      const filas = [{a:0, label:'Hoy'}];
+      for(let a=1; a<=plazo; a++) filas.push({a:a, label:'Año '+a});
+
+      const tbody = $('tabla'); tbody.innerHTML='';
+      filas.forEach(f => {
+        const vUDI = valorHoy * Math.pow(1+tasa, f.a);
+        const peso = udisBase * vUDI;
+        const ancho = (peso/maxPeso*100);
+        const esMeta = f.a === plazo;
+        const tr = document.createElement('tr');
+        if(esMeta) tr.className = 'meta';
+        tr.innerHTML = '<td>'+f.label+(esMeta?' <span class="tag-meta">Meta</span>':'')+'<div class="cal">'+(baseYear+f.a)+'</div></td>'+
+          '<td class="num">$'+fNum(vUDI)+'</td>'+
+          '<td class="num peso">'+fMX(peso)+'</td>'+
+          '<td><div class="barra" style="width:'+ancho+'%"></div></td>';
+        tbody.appendChild(tr);
+      });
+
+      $('res-final').textContent = fMX(finalPeso);
+      $('res-sub').textContent = fNum(udisBase)+' UDIS · en '+plazo+' años (tasa '+($('tasa').value||0)+'% anual)';
+    }
+
+    function marcarPreset(){
+      const v = $('plazo').value;
+      document.querySelectorAll('#presets button').forEach(x => x.classList.toggle('on', x.dataset.y === v));
+    }
+    function syncDesdePlazo(){ $('metaManual').value = $('plazo').value; marcarPreset(); }
+    document.getElementById('presets').addEventListener('click', e => {
+      const b = e.target.closest('button'); if(!b) return;
+      $('plazo').value = b.dataset.y; syncDesdePlazo(); proyectar();
+    });
+    $('metaManual').addEventListener('input', () => {
+      if($('metaManual').value) $('plazo').value = $('metaManual').value;
+      marcarPreset(); proyectar();
+    });
+    $('monto').addEventListener('input', () => { fmtCaret($('monto')); proyectar(); });
+    $('plazo').addEventListener('input', () => { syncDesdePlazo(); proyectar(); });
+    ['udi','tasa'].forEach(id => $(id).addEventListener('input', proyectar));
+    syncDesdePlazo(); proyectar();
+
+    /* ---- Imagen para el cliente ---- */
+    function roundRect(c,x0,y0,w,hh,r){c.beginPath();c.moveTo(x0+r,y0);c.arcTo(x0+w,y0,x0+w,y0+hh,r);c.arcTo(x0+w,y0+hh,x0,y0+hh,r);c.arcTo(x0,y0+hh,x0,y0,r);c.arcTo(x0,y0,x0+w,y0,r);c.closePath();}
+    async function generarImagen(){
+      const monto = num($('monto'));
+      let plazo = Math.max(1, Math.min(99, parseInt($('plazo').value)||1));
+      const tasa = (parseFloat($('tasa').value)||0)/100;
+      const valorHoy = udi();
+      const udisBase = unidad==='udis' ? monto : (valorHoy ? monto/valorHoy : 0);
+      const baseYear = new Date().getFullYear();
+      const valAt  = a => valorHoy*Math.pow(1+tasa,a);
+      const pesoAt = a => udisBase*valAt(a);
+      const filas=[{a:0,label:'Hoy'}]; for(let a=1;a<=plazo;a++) filas.push({a:a,label:'Año '+a});
+      const maxPeso = pesoAt(plazo) || 1;
+      const finalPeso = pesoAt(plazo);
+
+      const W=1080, margin=70, rowH=40, headTblH=52;
+      const dosCol = filas.length > 14;
+      const cols = dosCol?2:1;
+      const filasCol = Math.ceil(filas.length/cols);
+      const tableH = headTblH + filasCol*rowH;
+      const cardY=340, cardH=162;
+      const chartTop=cardY+cardH+70, chartH=470, chartBottom=chartTop+chartH;
+      const xLabelY=chartBottom+46, tableTitleY=xLabelY+62, tableTop=tableTitleY+34;
+      const H = tableTop + tableH + 120;
+
+      const c=document.createElement('canvas'); c.width=W; c.height=H;
+      const x=c.getContext('2d');
+      try{ await document.fonts.ready; }catch(e){}
+
+      x.fillStyle='#f6f2ea'; x.fillRect(0,0,W,H);
+      x.fillStyle='#21483d'; x.fillRect(0,0,W,300);
+      x.textAlign='left';
+      x.fillStyle='#d9b465'; x.font="600 26px 'Jost',Arial,sans-serif"; x.fillText('PORTAL NOVA LEGADO',margin,100);
+      x.fillStyle='#f6f2ea'; x.font="700 66px 'Fraunces',Georgia,serif"; x.fillText('Proyección en UDIS',margin,184);
+      x.fillStyle='#C7D2C5'; x.font="400 28px 'Jost',Arial,sans-serif";
+      x.fillText(fNum(udisBase)+' UDIS   ·   '+plazo+' años   ·   '+($('tasa').value||0)+'% anual',margin,244);
+
+      x.fillStyle='#21483d'; roundRect(x,margin,cardY,W-2*margin,cardH,18); x.fill();
+      x.textAlign='center';
+      x.fillStyle='#d9b465'; x.font="600 24px 'Jost',Arial,sans-serif"; x.fillText('VALOR PROYECTADO EN '+plazo+' AÑOS · '+(baseYear+plazo),W/2,cardY+58);
+      x.fillStyle='#f6f2ea'; x.font="700 66px 'Fraunces',Georgia,serif"; x.fillText(fMX(finalPeso),W/2,cardY+132);
+
+      const cx0=margin+30,cx1=W-margin-30,cy0=chartTop,cy1=chartBottom;
+      const pts=filas.map(f=>({x:cx0+(f.a/plazo)*(cx1-cx0), y:cy1-(pesoAt(f.a)/maxPeso)*(cy1-cy0), peso:pesoAt(f.a)}));
+      x.beginPath(); pts.forEach((pp,i)=> i?x.lineTo(pp.x,pp.y):x.moveTo(pp.x,pp.y)); x.lineTo(cx1,cy1); x.lineTo(cx0,cy1); x.closePath();
+      const g=x.createLinearGradient(0,cy0,0,cy1); g.addColorStop(0,'rgba(200,153,61,.5)'); g.addColorStop(1,'rgba(200,153,61,.04)'); x.fillStyle=g; x.fill();
+      x.strokeStyle='#e0e7df'; x.lineWidth=2; x.beginPath(); x.moveTo(cx0,cy1); x.lineTo(cx1,cy1); x.stroke();
+      x.beginPath(); pts.forEach((pp,i)=> i?x.lineTo(pp.x,pp.y):x.moveTo(pp.x,pp.y)); x.strokeStyle='#c89a4a'; x.lineWidth=5; x.lineJoin='round'; x.stroke();
+      const ps=pts[0], pe=pts[pts.length-1];
+      x.fillStyle='#21483d'; [ps,pe].forEach(pp=>{x.beginPath();x.arc(pp.x,pp.y,10,0,Math.PI*2);x.fill();});
+      x.fillStyle='#21483d'; x.font="600 26px 'Jost',Arial,sans-serif";
+      x.textAlign='left'; x.fillText('Hoy ('+baseYear+')',cx0,xLabelY);
+      x.textAlign='right'; x.fillText('Año '+plazo+' ('+(baseYear+plazo)+')',cx1,xLabelY);
+      x.font="600 24px 'Jost',Arial,sans-serif";
+      x.textAlign='left'; x.fillStyle='#6e7c73'; x.fillText(fMX(ps.peso),cx0,ps.y-22);
+      x.textAlign='right'; x.fillStyle='#21483d'; x.fillText(fMX(pe.peso),cx1,pe.y-22);
+
+      x.textAlign='left'; x.fillStyle='#21483d'; x.font="700 34px 'Fraunces',Georgia,serif";
+      x.fillText('Evolución año por año',margin,tableTitleY);
+
+      const tableW=W-2*margin, colGap=34;
+      const colW = dosCol ? (tableW-colGap)/2 : tableW;
+      for(let col=0; col<cols; col++){
+        const cxL = margin + col*(colW+colGap);
+        const udiR = cxL + colW*0.56, pesoR = cxL + colW - 4;
+        x.font="600 21px 'Jost',Arial,sans-serif"; x.fillStyle='#8A7A55';
+        x.textAlign='left'; x.fillText('AÑO',cxL+4,tableTop+30);
+        x.textAlign='right'; x.fillText('VALOR UDI',udiR,tableTop+30); x.fillText('VALOR EN PESOS',pesoR,tableTop+30);
+        x.strokeStyle='#e0e7df'; x.lineWidth=2; x.beginPath(); x.moveTo(cxL,tableTop+headTblH-8); x.lineTo(cxL+colW,tableTop+headTblH-8); x.stroke();
+        const start=col*filasCol, end=Math.min(start+filasCol,filas.length);
+        for(let i=start;i<end;i++){
+          const f=filas[i]; const vU=valAt(f.a); const pz=pesoAt(f.a);
+          const ry=tableTop+headTblH+(i-start)*rowH;
+          if(f.a===plazo){ x.fillStyle='#FBF1DD'; roundRect(x,cxL-2,ry+2,colW+4,rowH-2,8); x.fill(); }
+          x.textAlign='left'; x.font="500 23px 'Jost',Arial,sans-serif"; x.fillStyle='#21483d';
+          x.fillText(f.label+' · '+(baseYear+f.a),cxL+4,ry+28);
+          x.textAlign='right'; x.font="400 23px 'Jost',Arial,sans-serif"; x.fillStyle='#6e7c73';
+          x.fillText('$'+fNum(vU),udiR,ry+28);
+          x.font="600 23px 'Jost',Arial,sans-serif"; x.fillStyle='#21483d';
+          x.fillText(fMX(pz),pesoR,ry+28);
+          x.strokeStyle='#EBE5D6'; x.lineWidth=1; x.beginPath(); x.moveTo(cxL,ry+rowH); x.lineTo(cxL+colW,ry+rowH); x.stroke();
+        }
+      }
+
+      x.textAlign='center'; x.fillStyle='#6e7c73'; x.font="400 22px 'Jost',Arial,sans-serif";
+      x.fillText('Valor UDI usado: $'+valorHoy.toFixed(4)+'   ·   Proyección estimada; la UDI se actualiza con la inflación.',W/2,H-58);
+      x.fillStyle='#21483d'; x.font="600 26px 'Jost',Arial,sans-serif"; x.fillText('Portal Nova Legado',W/2,H-22);
+
+      const url=c.toDataURL('image/png');
+      document.getElementById('imgPreview').src=url;
+      document.getElementById('descargar').href=url;
+      document.getElementById('modalImg').classList.add('abierto');
+    }
+    document.getElementById('btnImg').addEventListener('click', generarImagen);
+    document.getElementById('cerrarImg').addEventListener('click', ()=>document.getElementById('modalImg').classList.remove('abierto'));
+    document.getElementById('modalImg').addEventListener('click', e=>{ if(e.target.id==='modalImg') document.getElementById('modalImg').classList.remove('abierto'); });
+  </script>
+</body>
+</html>

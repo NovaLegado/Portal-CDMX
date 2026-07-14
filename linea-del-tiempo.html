@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Línea de Tiempo · Portal Nova Legado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f6f2ea; --noche:#21483d; --noche-2:#16322a;
+    --oro:#c89a4a; --oro-claro:#d9b465;
+    --gris:#6e7c73; --texto:#27332d; --mut:#6e7c73; --linea:#e0e7df;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Jost',system-ui,sans-serif;background:var(--bg);color:var(--texto);
+    -webkit-font-smoothing:antialiased;line-height:1.5;padding:0 0 70px;overflow-x:hidden;}
+
+  /* ====== HERO con aurora ====== */
+  .hero{position:relative;text-align:center;padding:64px 20px 22px;overflow:visible;}
+  .aurora{position:absolute;inset:-60px 0 0;pointer-events:none;z-index:0;filter:blur(52px);opacity:.55;}
+  .aurora span{position:absolute;border-radius:50%;}
+  .aurora .a1{width:340px;height:250px;left:8%;top:30px;background:radial-gradient(closest-side,#d9b465,transparent 70%);}
+  .aurora .a2{width:420px;height:280px;right:6%;top:0;background:radial-gradient(closest-side,#9dbfae,transparent 70%);}
+  .aurora .a3{width:280px;height:220px;left:42%;top:110px;background:radial-gradient(closest-side,#e8d7ae,transparent 70%);}
+  .hero-in{position:relative;z-index:2;}
+  .kicker{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--oro);font-weight:600;margin-bottom:12px;}
+  h1{font-family:'Fraunces',sans-serif;font-weight:700;font-size:clamp(2.2rem,7.5vw,3.9rem);
+    color:var(--noche);letter-spacing:-.01em;line-height:1.02;}
+  .sub-h{color:var(--mut);font-size:1.02rem;margin:14px auto 0;max-width:520px;}
+
+  /* tarjetitas flotantes del hero */
+  .flotantes{position:relative;z-index:2;max-width:820px;margin:22px auto 0;height:64px;}
+  .mini{position:absolute;display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid #EBE4D3;
+    border-radius:13px;padding:9px 14px;box-shadow:0 18px 34px -22px rgba(31,58,46,.5);
+    font-size:.8rem;font-weight:500;color:var(--texto);animation:flota 5.5s ease-in-out infinite;}
+  .mini b{display:block;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:600;}
+  .mini .pt{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 auto;}
+  .mini .pt svg{width:17px;height:17px;}
+  .mini.m1{left:2%;top:2px;} .mini.m2{left:38%;top:14px;animation-delay:1.4s;} .mini.m3{right:2%;top:0;animation-delay:2.6s;}
+  @keyframes flota{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+  @media (max-width:700px){ .flotantes{display:none;} }
+
+  /* ====== NAV DE FASES ====== */
+  .fases-nav{position:sticky;top:0;z-index:30;background:linear-gradient(var(--bg) 82%,rgba(246,242,234,0));padding:18px 0 16px;}
+  .fnav-in{max-width:920px;margin:0 auto;padding:0 20px;position:relative;}
+  .fnav-row{display:flex;align-items:center;gap:10px;}
+  .flecha{flex:0 0 auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:#fff;
+    color:var(--noche);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 18px -12px rgba(31,58,46,.5);transition:all .2s;}
+  .flecha:hover{background:var(--noche);color:#fff;}
+  .flecha:disabled{opacity:.28;cursor:default;background:#fff;color:var(--noche);}
+  .flecha svg{width:18px;height:18px;}
+  .ftabs{flex:1;position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .ftabs::before{content:"";position:absolute;left:6%;right:6%;top:19px;height:3px;background:var(--linea);border-radius:3px;z-index:0;}
+  .ftabs .relleno{position:absolute;left:6%;top:19px;height:3px;background:linear-gradient(90deg,var(--oro),var(--oro-claro));border-radius:3px;z-index:1;
+    width:0;transition:width .35s ease;max-width:88%;}
+  .ftab{position:relative;z-index:2;background:transparent;border:0;cursor:pointer;font-family:inherit;
+    display:flex;flex-direction:column;align-items:center;gap:7px;padding:0;color:var(--mut);}
+  .ftab .pin{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--linea);
+    display:flex;align-items:center;justify-content:center;font-family:'Fraunces',sans-serif;font-weight:700;
+    font-size:1.02rem;color:var(--mut);transition:all .3s;}
+  .ftab .lab{font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;transition:color .3s;text-align:center;line-height:1.25;}
+  .ftab.activa .pin{background:var(--noche);border-color:var(--noche);color:#fff;box-shadow:0 0 0 5px rgba(200,154,74,.22);}
+  .ftab.activa .lab{color:var(--noche);}
+  .ftab.pasada .pin{background:var(--oro);border-color:var(--oro);color:#fff;}
+  @media (max-width:560px){ .ftab .lab{font-size:.62rem;} .flecha{display:none;} }
+
+  /* ====== PISTA ====== */
+  .pista{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .pista::-webkit-scrollbar{display:none;}
+  .fase{flex:0 0 100%;min-width:100%;scroll-snap-align:start;scroll-snap-stop:always;padding:8px 0 30px;position:relative;}
+  .fase-in{max-width:920px;margin:0 auto;padding:0 20px;position:relative;z-index:2;}
+  .fase .aurora{opacity:.35;}
+
+  .fase-head{display:flex;align-items:baseline;gap:14px;margin:12px 0 4px;flex-wrap:wrap;}
+  .fase-num{font-family:'Fraunces',sans-serif;font-weight:700;font-size:2.6rem;
+    background:linear-gradient(120deg,var(--oro),#a87c2f);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
+  .fase-tit{font-family:'Fraunces',sans-serif;font-weight:700;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--noche);text-transform:uppercase;}
+  .fase-rango{font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);
+    background:#fff;border:1px solid var(--linea);border-radius:999px;padding:5px 13px;}
+  .fase-desc{color:var(--mut);font-size:.95rem;margin:4px 0 22px;max-width:640px;}
+  .viene{display:inline-flex;align-items:center;gap:8px;color:var(--mut);font-size:.78rem;font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+  .viene svg{width:15px;height:15px;color:var(--oro);}
+
+  /* Cédula paralela */
+  .cedula{position:relative;margin:14px auto 6px;
+    background:linear-gradient(180deg,#234234,#21483d);color:#F2EEDF;
+    border:1.6px dashed var(--oro);border-radius:16px;padding:20px 22px 20px 92px;}
+  .cedula .tagico{position:absolute;left:20px;top:22px;width:54px;height:54px;border-radius:12px;
+    background:rgba(200,153,61,.16);display:flex;align-items:center;justify-content:center;color:var(--oro-claro);}
+  .cedula .tagico svg{width:30px;height:30px;}
+  .cedula .et{font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-claro);font-weight:600;margin-bottom:5px;}
+  .cedula h2{font-family:'Fraunces',sans-serif;font-weight:700;font-size:1.25rem;margin-bottom:7px;}
+  .cedula p{font-size:.92rem;color:#CBD9C8;}
+  .cedula .ancla{margin-top:12px;display:inline-flex;align-items:center;gap:8px;
+    background:var(--oro);color:var(--noche);font-weight:600;font-size:.78rem;padding:6px 13px;border-radius:999px;}
+  .cedula .ancla svg{width:15px;height:15px;}
+  .conector-paralelo{width:2px;height:26px;margin:0 auto;
+    background:repeating-linear-gradient(var(--oro) 0 5px,transparent 5px 10px);}
+  @media (max-width:560px){ .cedula{padding:18px;} .cedula .tagico{display:none;} }
+
+  /* Timeline */
+  .tl{position:relative;margin-top:6px;}
+  .tl::before{content:"";position:absolute;left:31px;top:14px;bottom:30px;width:3px;border-radius:3px;
+    background:linear-gradient(180deg,var(--oro-claro),var(--linea) 30%,var(--linea) 70%,var(--oro-claro));}
+  @media (max-width:560px){ .tl::before{ left:25px; } }
+
+  .paso{position:relative;display:grid;grid-template-columns:64px 1fr auto;gap:18px;align-items:stretch;margin-bottom:22px;
+    opacity:0;transform:translateY(20px);
+    transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1);}
+  .paso.visible{opacity:1;transform:none;}
+  @media (max-width:560px){ .paso{grid-template-columns:50px 1fr;gap:12px;} .paso .media{display:none;} }
+
+  .tab{position:relative;z-index:2;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:'Fraunces',sans-serif;font-weight:700;font-size:1.5rem;
+    box-shadow:0 8px 18px -10px rgba(31,58,46,.5);min-height:64px;}
+  .tab.noche{background:linear-gradient(160deg,#2a5546,#21483d);}
+  .tab.oro{background:linear-gradient(160deg,#E0AE54,#c89a4a);}
+  .tab.mes{background:linear-gradient(160deg,#7c8b81,#6e7c73);writing-mode:vertical-rl;transform:rotate(180deg);
+    font-size:.74rem;font-weight:700;letter-spacing:.12em;padding:10px 0;font-family:'Jost',sans-serif;}
+  .tab .glow{position:absolute;inset:0;border-radius:12px;box-shadow:0 0 0 0 rgba(200,153,61,0);transition:box-shadow .45s ease;}
+  .paso.activado .tab .glow{box-shadow:0 0 0 4px rgba(200,153,61,.22);}
+
+  .cuerpo{background:#fff;border-radius:14px;padding:16px 18px;
+    box-shadow:0 14px 30px -24px rgba(31,58,46,.45);border:1px solid #E8E2D2;}
+  .cab{width:100%;text-align:left;background:transparent;border:0;cursor:pointer;
+    display:flex;align-items:center;gap:12px;padding:0;font-family:inherit;color:inherit;}
+  .cab:focus-visible{outline:3px solid var(--oro);outline-offset:4px;border-radius:8px;}
+  .cab-tx{flex:1;min-width:0;}
+  .cab-t{display:block;font-family:'Fraunces',sans-serif;font-weight:700;font-size:1.05rem;
+    color:var(--noche);text-transform:uppercase;letter-spacing:.01em;}
+  .cab-s{display:block;font-size:.84rem;color:var(--mut);margin-top:3px;}
+  .chev{flex:0 0 auto;width:20px;height:20px;color:var(--oro);transition:transform .35s ease;}
+  .paso.abierto .chev{transform:rotate(180deg);}
+  .det{display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s ease;}
+  .paso.abierto .det{grid-template-rows:1fr;}
+  .det-in{overflow:hidden;}
+  .det-body{padding-top:12px;}
+  .det-body p{font-size:.92rem;color:#3F4A40;}
+  .det-body strong{color:var(--noche);font-weight:600;}
+  .metas{margin-top:11px;display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font-size:.72rem;font-weight:600;letter-spacing:.02em;padding:5px 11px;border-radius:999px;background:#E7EFE7;color:#2e5a4c;}
+  .chip.oro{background:#FBF1DD;color:#8A6420;}
+  .chip.ok{background:#E5F6EC;color:#1C7A41;display:inline-flex;align-items:center;gap:5px;}
+  .chip.ok svg{width:12px;height:12px;}
+
+  /* Campaña destacada: Camino a la Cumbre */
+  .tab.cumbre{background:linear-gradient(160deg,#E0AE54,#a87c2f);writing-mode:vertical-rl;transform:rotate(180deg);
+    font-size:.7rem;font-weight:700;letter-spacing:.16em;padding:12px 0;font-family:'Jost',sans-serif;}
+  .paso.destacada .cuerpo{background:linear-gradient(180deg,#FFFDF6,#FBF1DD);
+    border:1.6px dashed var(--oro);box-shadow:0 18px 38px -22px rgba(168,124,47,.55);}
+  .paso.destacada .cab-t{color:#8A6420;}
+  .cab-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:9px;
+    box-shadow:0 0 0 3px rgba(0,0,0,.06);vertical-align:baseline;}
+  .niveles{margin-top:12px;display:grid;gap:9px;}
+  .nivel{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
+    background:#fff;border:1px solid #EFE6D0;border-radius:11px;padding:10px 13px;}
+  .nivel .dot{width:13px;height:13px;border-radius:50%;margin-top:4px;box-shadow:0 0 0 3px rgba(0,0,0,.05);}
+  .nivel .nom{font-weight:600;color:var(--noche);font-size:.9rem;letter-spacing:.02em;text-transform:uppercase;}
+  .nivel .meta{font-size:.73rem;font-weight:600;color:#8A6420;background:#FBF1DD;border-radius:999px;padding:2px 9px;margin-left:8px;white-space:nowrap;}
+  .nivel .premios{font-size:.84rem;color:#3F4A40;margin-top:3px;}
+
+  /* medallón con halo degradado (estilo Liftoff) */
+  .media{align-self:center;width:96px;height:96px;border-radius:50%;position:relative;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 32% 28%, #fff 0%, #faf6ec 55%, #f0e6cf 100%);
+    border:1px solid #EBE2CC;box-shadow:0 16px 30px -22px rgba(31,58,46,.55);}
+  .media::before{content:"";position:absolute;inset:-7px;border-radius:50%;z-index:-1;filter:blur(10px);opacity:.55;
+    background:conic-gradient(from 210deg,#d9b465,#9dbfae,#e8d7ae,#d9b465);}
+  .media svg{width:46px;height:46px;}
+
+  .sigue{display:flex;justify-content:flex-end;margin-top:6px;}
+  .sigue button{display:inline-flex;align-items:center;gap:10px;color:#F2EEDF;border:0;cursor:pointer;
+    background:linear-gradient(135deg,#2a5546,#21483d 55%,#16322a);
+    font-family:inherit;font-weight:600;font-size:.9rem;padding:13px 20px;border-radius:999px;
+    box-shadow:0 16px 30px -16px rgba(31,58,46,.75);transition:transform .2s,box-shadow .2s;}
+  .sigue button:hover{transform:translateX(4px);box-shadow:0 18px 34px -14px rgba(31,58,46,.8);}
+  .sigue button svg{width:17px;height:17px;}
+
+  footer{text-align:center;color:var(--mut);font-size:.78rem;letter-spacing:.04em;padding-top:26px;}
+  footer b{color:var(--noche);}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important;}}
+  body.sin-motion .paso{opacity:1;transform:none;}
+</style>
+<noscript><style>.paso{opacity:1!important;transform:none!important;}</style></noscript>
+</head>
+<body>
+
+<script>
+/* ============================================================
+   ✏️  EDITA AQUÍ TODO EL CONTENIDO DE LA LÍNEA DE TIEMPO
+   ------------------------------------------------------------
+   · Cada FASE tiene: num, titulo, rango, desc, viene (opcional)
+     y su lista de pasos.
+   · Cada PASO tiene:
+       tab    → lo que aparece en la pestaña ("1", "12 Meses"...)
+       estilo → "oro" | "noche" | "mes"  (mes = pestaña vertical gris)
+       titulo → nombre de la subfase
+       sub    → renglón chico bajo el título
+       texto  → descripción (puedes usar <strong>negritas</strong>)
+       chips  → etiquetas; estilo "" (verde), "oro" u "ok" (palomita)
+       icono  → nombre del icono (lista en ICONOS, abajo)
+       abierto→ true para que inicie desplegado
+   · Para AGREGAR una subfase: copia un bloque { ... }, y pégalo
+     donde quieras dentro de pasos:[ ... ]. Para QUITARLA: bórralo.
+   · La fase 1 además tiene "paralelo" (la tarjeta de Cédula A1).
+   ============================================================ */
+const FASES = [
+  {
+    num: "01",
+    titulo: "Pre-contrato",
+    rango: "Del arranque a tu firma",
+    desc: "Tu preparación completa: capacitación, primeras citas y los requisitos para llegar a tu Contrato Definitivo.",
+    paralelo: {
+      etiqueta: "En paralelo · en cualquier momento de esta fase",
+      titulo: "Cédula A1",
+      texto: "Prepárate para presentar la cédula A1 en la CNSF: paga el derecho y aprueba los tres exámenes. Estudia y practica en el simulador con las preguntas modelo. Tienes un taller de una semana con SMNYL para llegar listo.",
+      ancla: "Debe estar lista para tu Firma de Contrato"
+    },
+    pasos: [
+      { tab:"1", estilo:"oro", titulo:"Capacitación", sub:"Una semana de preparación", abierto:true, icono:"birrete",
+        texto:"Una semana para entender el oficio: qué hacer, cómo se hace, hacia dónde vas y por qué. Llevas la <strong>Certificación como Asesor Patrimonial</strong> y conoces el proceso de ventas y el Análisis de Necesidades Financieras (ANF).",
+        chips:[{t:"≈ 1 semana", estilo:"oro"}] },
+      { tab:"2", estilo:"oro", titulo:"Campo", sub:"Tus primeras citas y actividad", icono:"calendario",
+        texto:"Terminando tu capacitación, sales a campo: arrancan tus actividades y tus citas. La meta es sostener el ritmo que te lleva a tus objetivos.",
+        chips:[{t:"Meta ≈ 10 citas / semana", estilo:"oro"}] },
+      { tab:"3", estilo:"oro", titulo:"Clave Temporal", sub:"Tu clave provisional para operar", icono:"llave",
+        texto:"Con tu <strong>primera solicitud de vida firmada</strong> se genera tu clave temporal como asesor de seguros, junto con tu alta al portal y al sistema SMNYL Central.",
+        chips:[{t:"Vigencia máx. 90 días", estilo:"oro"}] },
+      { tab:"4", estilo:"noche", titulo:"EFC", sub:"Escuela Fundamental de Carrera", icono:"libro",
+        texto:"Con tu <strong>segunda póliza de vida firmada</strong>, te inscribes a la Escuela Fundamental de Carrera para realizarla en la fecha asignada en tu calendario.",
+        chips:[] },
+      { tab:"5", estilo:"noche", titulo:"Firma de Contrato", sub:"Tu contrato definitivo", icono:"contrato",
+        texto:"Con al menos <strong>6 pólizas de vida vigentes</strong> y tu <strong>cédula lista</strong>, firmas tu Contrato Definitivo. Y al empezar a cobrar comisiones, por definición, también <strong>ganas bono</strong>.",
+        chips:[{t:"6 pólizas vigentes de vida", estilo:""},{t:"Cédula A1 lista", estilo:"ok"}] }
+    ],
+    sigue: "Continúa: Primeros 12 meses"
+  },
+  {
+    num: "02",
+    titulo: "Primeros 12 meses",
+    rango: "De la firma a tu graduación",
+    desc: "Tu primer año como asesor con contrato: desarrollo, ritmo comercial y la campaña Camino a la Cumbre rumbo a tu graduación.",
+    viene: "Viene de: Firma de Contrato",
+    pasos: [
+      { tab:"6", estilo:"oro", titulo:"Arranque con Bono", sub:"Tus primeras comisiones + bono", abierto:true, icono:"moneda",
+        texto:"Con tu contrato firmado empiezas a <strong>cobrar comisiones</strong> y, por definición, <strong>ganas bono</strong>. Es la etapa de convertir tu actividad de pre-contrato en ingreso constante.",
+        chips:[{t:"Comisiones + bono", estilo:"oro"}] },
+      { tab:"7", estilo:"oro", titulo:"Desarrollo Nova", sub:"Capacitación y desarrollo como asesor", icono:"birrete",
+        texto:"Programas de <strong>capacitación y desarrollo</strong> como asesor para lograr <strong>consolidar tu cartera</strong>: acompañamiento, entrenamiento y crecimiento dentro de la agencia.",
+        chips:[{t:"Capacitación continua", estilo:""},{t:"Consolidación de cartera", estilo:""}] },
+      { tab:"8", estilo:"oro", titulo:"Ritmo Comercial", sub:"Tu meta mensual de pólizas", icono:"grafica",
+        texto:"La base es de <strong>3 pólizas mensuales</strong>. Y al sostener <strong>4 pólizas mensuales</strong> detonas <strong>Camino a la Cumbre</strong>, la campaña de metas y premios por niveles.",
+        chips:[{t:"3 pólizas / mes · base", estilo:""},{t:"4 pólizas / mes · detonas la Cumbre", estilo:"oro"}] },
+      { tab:"3 Meses", estilo:"cumbre", destacada:true, abierto:true, color:"#d1a520", titulo:"Nivel Kubor", sub:"Camino a la Cumbre · 12 pólizas", icono:"montana",
+        texto:"Primer nivel de la campaña: <strong>12 pólizas</strong> acumuladas al tercer mes.",
+        chips:[{t:"Bono $6,000 pesos", estilo:"oro"},{t:"Pin", estilo:""}] },
+      { tab:"6 Meses", estilo:"cumbre", destacada:true, color:"#3f5fae", titulo:"Nivel Mont Blanc", sub:"Camino a la Cumbre · 24 pólizas", icono:"montana",
+        texto:"Segundo nivel: <strong>24 pólizas</strong> acumuladas al sexto mes.",
+        chips:[{t:"Reconocimiento", estilo:""},{t:"Bolígrafo Mont Blanc · asesor", estilo:"oro"},{t:"Portafolio p/ laptop + pluma Swarovski · asesora", estilo:"oro"},{t:"Desayuno exclusivo", estilo:""}] },
+      { tab:"9 Meses", estilo:"cumbre", destacada:true, color:"#e0703a", titulo:"Nivel Elbrús", sub:"Camino a la Cumbre · 36 pólizas", icono:"montana",
+        texto:"Tercer nivel: <strong>36 pólizas</strong> acumuladas al noveno mes.",
+        chips:[{t:"Reconocimiento", estilo:""},{t:"iPad", estilo:"oro"}] },
+      { tab:"12 Meses", estilo:"cumbre", destacada:true, color:"#2e9146", titulo:"Nivel McKinley", sub:"Camino a la Cumbre · 48 pólizas", icono:"montana",
+        texto:"Cuarto nivel: <strong>48 pólizas</strong> acumuladas al cierre de tu primer año.",
+        chips:[{t:"Reconocimiento", estilo:""},{t:"$25,000 pesos", estilo:"oro"},{t:"Mención Honorífica en Graduación", estilo:"oro"}] },
+      { tab:"12 Meses", estilo:"mes", titulo:"Graduación", sub:"36 pólizas · tu ceremonia", icono:"birrete2",
+        texto:"Con <strong>36 pólizas pagadas</strong> logras tu <strong>Graduación</strong> en <strong>Juriquilla, Querétaro</strong>. Y si llegas a <strong>48 pólizas</strong>, obtienes la <strong>Mención Honorífica</strong> como logro adicional.",
+        chips:[{t:"36 pólizas → Graduación", estilo:""},{t:"48 pólizas → Mención Honorífica", estilo:"oro"},{t:"Juriquilla, Querétaro", estilo:""}] }
+    ],
+    sigue: "Continúa: Consolidación"
+  },
+  {
+    num: "03",
+    titulo: "Consolidación",
+    rango: "De los 12 a los 24 meses",
+    desc: "Tu segundo año: cerrar Camino a la Cumbre en la cima, administrar tu cartera y construir tu siguiente nivel.",
+    viene: "Viene de: Graduación",
+    pasos: [
+      { tab:"15 Meses", estilo:"cumbre", destacada:true, abierto:true, color:"#6a5aa8", titulo:"Nivel Kilimanjaro", sub:"Camino a la Cumbre · 60 pólizas", icono:"montana",
+        texto:"Quinto nivel de la campaña: <strong>60 pólizas</strong> acumuladas al mes 15.",
+        chips:[{t:"Reconocimiento", estilo:""},{t:"Laptop", estilo:"oro"}] },
+      { tab:"18 Meses", estilo:"cumbre", destacada:true, abierto:true, color:"#b33430", titulo:"Nivel Everest · La Cima", sub:"Camino a la Cumbre · 72 pólizas", icono:"montana",
+        texto:"El punto más alto de la campaña: <strong>72 pólizas</strong> acumuladas al mes 18.",
+        chips:[{t:"Reconocimiento", estilo:""},{t:"Viaje para 2 personas", estilo:"oro"}] },
+      { tab:"9", estilo:"noche", titulo:"Cartera Sólida", sub:"Administración de renovaciones", icono:"personas",
+        texto:"Tu cartera empieza a trabajar para ti: <strong>administración de renovaciones</strong> y <strong>bonos de renovación</strong> que suman a tu ingreso constante.",
+        chips:[{t:"Renovaciones", estilo:""},{t:"Bonos de renovación", estilo:"oro"}] },
+      { tab:"10", estilo:"noche", titulo:"Siguiente Nivel", sub:"Por construir", icono:"trofeo",
+        texto:"El siguiente capítulo de tu carrera: metas de largo plazo que <strong>construimos juntos</strong> — el camino a tu crecimiento como empresario(a) en seguros.",
+        chips:[{t:"En construcción", estilo:"oro"}] }
+    ]
+  }
+];
+
+/* Tarjetitas flotantes del hero (hitos destacados) */
+const FLOTANTES = [
+  { icono:"credencial", chico:"En paralelo", texto:"Cédula A1", color:"#c89a4a" },
+  { icono:"birrete2",  chico:"12 meses",    texto:"Graduación · 36 pólizas", color:"#21483d" },
+  { icono:"montana",   chico:"18 meses",    texto:"Everest · Viaje p/ 2", color:"#6e7c73" }
+];
+</script>
+
+  <header class="hero">
+    <div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+    <div class="hero-in">
+      <div class="kicker">Portal Nova Legado</div>
+      <h1>Línea de Tiempo</h1>
+      <p class="sub-h">Una sola ruta, tres fases: de tu preparación al asesor consolidado.</p>
+    </div>
+    <div class="flotantes" id="flotantes"></div>
+  </header>
+
+  <div class="fases-nav">
+    <div class="fnav-in">
+      <div class="fnav-row">
+        <button class="flecha" id="fAtras" aria-label="Fase anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <div class="ftabs" id="ftabs"><span class="relleno" id="relleno"></span></div>
+        <button class="flecha" id="fAdelante" aria-label="Fase siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pista" id="pista"></div>
+
+  <footer><b>Portal Nova Legado</b> · Línea de Tiempo del Asesor</footer>
+
+  <script>
+    /* ====== ICONOS (agrega los tuyos aquí si quieres más) ====== */
+    const ICONOS = {
+      birrete:   '<svg viewBox="0 0 24 24" fill="none" stroke="#c89a4a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5L3 7.5 12 3z"/><path d="M6.5 9.8V15c0 1.2 2.5 2.4 5.5 2.4s5.5-1.2 5.5-2.4V9.8"/></svg>',
+      birrete2:  '<svg viewBox="0 0 24 24" fill="none" stroke="#6e7c73" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l10 5-10 5L2 9l10-5z"/><path d="M6 11v4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6v-4"/><path d="M21 9v5"/></svg>',
+      calendario:'<svg viewBox="0 0 24 24" fill="none" stroke="#c89a4a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v3M16 3v3M8 13.5l2 2 3.5-3.5"/></svg>',
+      llave:     '<svg viewBox="0 0 24 24" fill="none" stroke="#c89a4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+      libro:     '<svg viewBox="0 0 24 24" fill="none" stroke="#21483d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.4 5.2 7.4 5 4.5 5.6V19c2.9-.6 5.9-.4 7.5 1 1.6-1.4 4.6-1.6 7.5-1V5.6C16.6 5 13.6 5.2 12 6.5z"/><path d="M12 6.5V20"/></svg>',
+      contrato:  '<svg viewBox="0 0 24 24" fill="none" stroke="#21483d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v9a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M14 3v4h4M8 18c1.5-2 3-3 4-2s2 .5 3-1"/></svg>',
+      moneda:    '<svg viewBox="0 0 24 24" fill="none" stroke="#c89a4a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 15c.5 1 4.5 1.2 4.8-.7.3-2.2-4.6-1.5-4.4-3.6.2-1.8 3.7-1.7 4.4-.6"/></svg>',
+      grafica:   '<svg viewBox="0 0 24 24" fill="none" stroke="#c89a4a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>',
+      montana:   '<svg viewBox="0 0 24 24" fill="none" stroke="#6e7c73" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18L15 6l-3 5-2-3-7 12z"/><path d="M12 11l1.5-2"/></svg>',
+      personas:  '<svg viewBox="0 0 24 24" fill="none" stroke="#21483d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6"/><circle cx="17.5" cy="9.5" r="2.3"/><path d="M15.5 14.6c2.6-.4 4.6 1 5 3.9"/></svg>',
+      trofeo:    '<svg viewBox="0 0 24 24" fill="none" stroke="#21483d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 5H4.5c0 2.5 1 4 2.5 4.4M17 5h2.5c0 2.5-1 4-2.5 4.4"/></svg>',
+      credencial:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="11.5" r="2.2"/><path d="M5.5 16c.6-1.6 4.4-1.6 5 0M14 9h5M14 12.5h5M14 16h3"/></svg>'
+    };
+    const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>';
+    const OKSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>';
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+    /* ====== RENDER ====== */
+    (function render(){
+      /* flotantes del hero */
+      document.getElementById('flotantes').innerHTML = FLOTANTES.map((f,i) => `
+        <span class="mini m${i+1}">
+          <span class="pt" style="background:${f.color}">${ICONOS[f.icono]||''}</span>
+          <span><b>${esc(f.chico)}</b>${esc(f.texto)}</span>
+        </span>`).join('');
+
+      /* tabs */
+      const ftabs = document.getElementById('ftabs');
+      FASES.forEach((f,i) => {
+        ftabs.insertAdjacentHTML('beforeend',
+          `<button class="ftab${i===0?' activa':''}" data-i="${i}"><span class="pin">${i+1}</span><span class="lab">${esc(f.titulo)}</span></button>`);
+      });
+
+      /* fases */
+      const pista = document.getElementById('pista');
+      pista.innerHTML = FASES.map((f,i) => {
+        const paralelo = f.paralelo ? `
+          <div class="cedula">
+            <div class="tagico">${ICONOS.credencial}</div>
+            <div class="et">${esc(f.paralelo.etiqueta)}</div>
+            <h2>${esc(f.paralelo.titulo)}</h2>
+            <p>${esc(f.paralelo.texto)}</p>
+            <span class="ancla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M6 13l6 6 6-6"/></svg>${esc(f.paralelo.ancla)}</span>
+          </div>
+          <div class="conector-paralelo" aria-hidden="true"></div>` : '';
+
+        const pasos = f.pasos.map(p => `
+          <div class="paso${p.abierto?' abierto':''}${p.destacada?' destacada':''}">
+            <div class="tab ${p.estilo}"${p.color?` style="background:linear-gradient(160deg,${p.color}dd,${p.color})"`:''}>${esc(p.tab)}<span class="glow"></span></div>
+            <div class="cuerpo">
+              <button class="cab" aria-expanded="${p.abierto?'true':'false'}">
+                <span class="cab-tx"><span class="cab-t">${p.color?`<span class="cab-dot" style="background:${p.color}"></span>`:''}${esc(p.titulo)}</span><span class="cab-s">${esc(p.sub)}</span></span>
+                ${CHEV}
+              </button>
+              <div class="det"><div class="det-in"><div class="det-body">
+                <p>${p.texto}</p>
+                ${p.niveles ? `<div class="niveles">${p.niveles.map(n => `
+                  <div class="nivel"><span class="dot" style="background:${n.c}"></span>
+                    <div><span class="nom">${esc(n.nom)}</span><span class="meta">${esc(n.meta)}</span>
+                    <div class="premios">${esc(n.premios)}</div></div>
+                  </div>`).join('')}</div>` : ''}
+                ${p.nota ? `<div class="metas"><span class="chip oro">${esc(p.nota)} →</span></div>` : ''}
+                ${p.chips && p.chips.length ? `<div class="metas">${p.chips.map(c =>
+                  `<span class="chip ${c.estilo}">${c.estilo==='ok'?OKSVG:''}${esc(c.t)}</span>`).join('')}</div>` : ''}
+              </div></div></div>
+            </div>
+            <div class="media">${ICONOS[p.icono]||''}</div>
+          </div>`).join('');
+
+        return `
+          <section class="fase" id="fase-${i+1}">
+            <div class="aurora" aria-hidden="true"><span class="a${(i%3)+1}" style="left:${10+i*25}%;top:40px;width:320px;height:230px;position:absolute;border-radius:50%;background:radial-gradient(closest-side,${i===1?'#9dbfae':'#d9b465'},transparent 70%)"></span></div>
+            <div class="fase-in">
+              ${f.viene ? `<span class="viene"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${esc(f.viene)}</span>` : ''}
+              <div class="fase-head">
+                <span class="fase-num">${esc(f.num)}</span>
+                <span class="fase-tit">${esc(f.titulo)}</span>
+                <span class="fase-rango">${esc(f.rango)}</span>
+              </div>
+              <p class="fase-desc">${esc(f.desc)}</p>
+              ${paralelo}
+              <div class="tl">${pasos}</div>
+              ${f.sigue ? `<div class="sigue"><button data-goto="${i+1}">${esc(f.sigue)}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>` : ''}
+            </div>
+          </section>`;
+      }).join('');
+    })();
+
+    /* ====== INTERACCIÓN ====== */
+    (function(){
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var pista = document.getElementById('pista');
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.ftab'));
+      var relleno = document.getElementById('relleno');
+      var atras = document.getElementById('fAtras');
+      var adelante = document.getElementById('fAdelante');
+      var N = FASES.length;
+
+      function faseActual(){ return Math.round(pista.scrollLeft / pista.clientWidth); }
+      function irA(i){
+        i = Math.max(0, Math.min(N-1, i));
+        pista.scrollTo({ left: i * pista.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+      }
+      function pintar(){
+        var i = faseActual();
+        tabs.forEach(function(t,k){
+          t.classList.toggle('activa', k === i);
+          t.classList.toggle('pasada', k < i);
+        });
+        relleno.style.width = (i * (88/(N-1))) + '%';
+        atras.disabled = (i === 0);
+        adelante.disabled = (i === N-1);
+      }
+      tabs.forEach(function(t){ t.addEventListener('click', function(){ irA(parseInt(t.dataset.i,10)); }); });
+      atras.addEventListener('click', function(){ irA(faseActual()-1); });
+      adelante.addEventListener('click', function(){ irA(faseActual()+1); });
+      document.querySelectorAll('[data-goto]').forEach(function(b){
+        b.addEventListener('click', function(){ irA(parseInt(b.dataset.goto,10)); });
+      });
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'ArrowRight') irA(faseActual()+1);
+        if(e.key === 'ArrowLeft') irA(faseActual()-1);
+      });
+      var ticking = false;
+      pista.addEventListener('scroll', function(){
+        if(ticking) return;
+        ticking = true;
+        requestAnimationFrame(function(){ pintar(); ticking = false; });
+      });
+      window.addEventListener('resize', function(){ irA(faseActual()); });
+      pintar();
+
+      document.querySelectorAll('.cab').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var paso = btn.closest('.paso');
+          var abierto = paso.classList.toggle('abierto');
+          btn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+        });
+      });
+
+      var pasos = Array.prototype.slice.call(document.querySelectorAll('.paso'));
+      if(reduce){
+        document.body.classList.add('sin-motion');
+        pasos.forEach(function(p){ p.classList.add('visible','activado'); });
+        return;
+      }
+      if('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){
+            if(e.isIntersecting){ e.target.classList.add('visible','activado'); io.unobserve(e.target); }
+          });
+        }, { rootMargin:'0px 0px -10% 0px', threshold:0.15 });
+        pasos.forEach(function(p){ io.observe(p); });
+      } else {
+        pasos.forEach(function(p){ p.classList.add('visible','activado'); });
+      }
+    })();
+  </script>
+</body>
+</html>
