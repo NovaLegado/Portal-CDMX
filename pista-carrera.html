@@ -252,73 +252,19 @@ const EJEMPLO_CARRITO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3d
    · avance: {"2026-04": 3, ...}     → pólizas por mes CALENDARIO ("AAAA-MM")
      Su ventana de 12 meses se cuenta sola desde "inicio" (aunque cruce de año). */
 const ASESORES = [
- const ASESORES = [
-  {
-    "nombre": "FER LEON",
-    "color": "#e05a7a",
-    "inicio": {
-      "mes": "nov",
-      "anio": 2025
-    },
-    "foto": null,
-    "carrito": null,
-    "avance": {
-      "2026-01": 1,
-      "2026-04": 1,
-      "2026-05": 1,
-      "2025-11": 3,
-      "2025-12": 5
-    }
-  },
-  {
-    "nombre": "BETO",
-    "color": "#3f8fd4",
-    "inicio": {
-      "mes": "ene",
-      "anio": 2026
-    },
-    "foto": null,
-    "carrito": null,
-    "avance": {
-      "2026-01": 7,
-      "2026-02": 2,
-      "2026-03": 1,
-      "2026-05": 1
-    }
-  },
-  {
-    "nombre": "ROSY",
-    "color": "#e0913a",
-    "inicio": {
-      "mes": "jun",
-      "anio": 2026
-    },
-    "foto": null,
-    "carrito": null,
-    "avance": {
-      "2026-02": 2,
-      "2026-03": 3,
-      "2026-04": 3,
-      "2026-05": 2,
-      "2026-06": 4
-    }
-  },
-  {
-    "nombre": "JOSCELIN",
-    "color": "#7a5ab8",
-    "inicio": {
-      "mes": "feb",
-      "anio": 2026
-    },
-    "foto": null,
-    "carrito": null,
-    "avance": {
-      "2026-03": 5,
-      "2026-06": 1,
-      "2026-07": 2
-    }
-  }
-];
+  { nombre:"Danae", color:"#e05a7a", foto:null, carrito:null, inicio:{mes:"ene",anio:2026},
+    avance:{ "2026-01":3, "2026-02":4, "2026-03":3, "2026-04":4, "2026-05":3, "2026-06":4, "2026-07":2 } },
+  { nombre:"Luz",   color:"#3f8fd4", foto:null, carrito:null, inicio:{mes:"ene",anio:2026},
+    avance:{ "2026-01":2, "2026-02":3, "2026-03":4, "2026-04":3, "2026-05":4, "2026-06":3, "2026-07":3 } },
+  { nombre:"Fer",   color:"#e0913a", foto:null, carrito:null, inicio:{mes:"ene",anio:2026},
+    avance:{ "2026-01":4, "2026-02":2, "2026-03":3, "2026-04":3, "2026-05":2, "2026-06":3, "2026-07":1 } },
+  { nombre:"Dayne", color:"#7a5ab8", foto:null, carrito:null, inicio:{mes:"mar",anio:2026},
+    avance:{ "2026-03":2, "2026-04":2, "2026-05":3, "2026-06":2, "2026-07":2 } },
+  { nombre:"Paco",  color:"#2e9e6b", foto:null, carrito:null, inicio:{mes:"ene",anio:2026},
+    avance:{ "2026-01":3, "2026-02":3, "2026-03":2, "2026-04":4, "2026-05":3, "2026-06":2, "2026-07":2 } },
+  { nombre:"Diego", color:"#c89a4a", foto:null, carrito:EJEMPLO_CARRITO, inicio:{mes:"sep",anio:2025}, /* ← carrito de ejemplo */
+    avance:{ "2025-09":1, "2025-10":2, "2025-11":2, "2025-12":1, "2026-01":2, "2026-02":2, "2026-03":1,
+             "2026-04":2, "2026-05":2, "2026-06":1, "2026-07":1 } }
 ];
 /* ============================================================ */
 </script>
