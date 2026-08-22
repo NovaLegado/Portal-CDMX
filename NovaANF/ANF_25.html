@@ -60,7 +60,7 @@
     padding:15px 22px;display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--dorado);
     position:sticky;top:0;z-index:40;
   }
-  .logo{width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;}
+  .logo{width:92px;height:92px;flex:none;display:flex;align-items:center;justify-content:center;}
   .logo svg{width:46px;height:46px;}
   .brand h1{font-size:20px;margin:0;font-weight:400;letter-spacing:1px;}
   .brand h1 .nova{font-weight:800;color:#fff;}
@@ -69,7 +69,7 @@
   .brand h1 .asesores{color:var(--dorado);font-size:13px;letter-spacing:3px;font-weight:700;vertical-align:middle;}
   .brand p{font-size:10px;margin:3px 0 0;letter-spacing:2px;color:#8aa0c2;font-weight:600;text-transform:uppercase;}
 
-  .wrap{max-width:780px;margin:0 auto;padding:22px 16px 80px;}
+  .wrap{max-width:920px;margin:0 auto;padding:22px 16px 80px;zoom:1.18;}
 
   /* Stepper */
   .stepper{display:flex;align-items:flex-start;justify-content:center;margin:6px 0 26px;}
@@ -475,11 +475,7 @@
 
 <header>
   <div class="logo">
-    <svg viewBox="0 0 64 64" fill="none">
-      <circle cx="32" cy="32" r="27" stroke="#17b8c4" stroke-width="1.3" stroke-dasharray="3 3.5" opacity=".8"/>
-      <polygon points="32,5 37,27 50,32 37,37 32,59 27,37 14,32 27,27" fill="#1e5be6"/>
-      <polygon points="32,27 37,32 32,37 27,32" fill="#d4a12e"/>
-    </svg>
+    <img src="data:image/png;base64,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" alt="Logo" style="width:92px;height:92px;object-fit:contain">
   </div>
   <div class="brand">
     <h1><span class="nova">NOVA</span><span class="legado">LEGADO</span><span class="divider">|</span><span class="asesores">ASESORES</span></h1>
